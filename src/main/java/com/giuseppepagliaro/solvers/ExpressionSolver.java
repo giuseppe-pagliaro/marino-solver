@@ -1,17 +1,18 @@
-package com.giuseppepagliaro;
+package com.giuseppepagliaro.solvers;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.StringTokenizer;
 
-import com.giuseppepagliaro.errors.NoMoreStepsException;
+import com.giuseppepagliaro.exceptions.HistoryWasNotTrackedException;
+import com.giuseppepagliaro.exceptions.NoMoreStepsException;
 
-public class ExpressionEvaler implements Evaler{
-    public ExpressionEvaler(String expression) {
+public class ExpressionSolver implements Solver{
+    public ExpressionSolver(String expression, boolean saveHistory) {
         createExpressionTree(expression);
         
-        expressionHistory = new LinkedList<>();
+        if (saveHistory) expressionHistory = new LinkedList<>();
         expressionHistory.add(expression);
     }
 
@@ -38,17 +39,17 @@ public class ExpressionEvaler implements Evaler{
     }
 
     @Override
-    public String getSolution() {
+    public String getLatestStep() {
         return expressionHistory.getLast();
     }
 
     @Override
-    public String getBase() {
+    public String getBase() throws HistoryWasNotTrackedException {
         return expressionHistory.getFirst();
     }
 
     @Override
-    public LinkedList<String> getHistory() {
+    public LinkedList<String> getHistory() throws HistoryWasNotTrackedException {
         return new LinkedList<>(expressionHistory);
     }
 
