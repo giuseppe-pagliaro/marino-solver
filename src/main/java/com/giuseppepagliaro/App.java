@@ -1,8 +1,8 @@
-package src.main;
+package com.giuseppepagliaro;
 
 import java.util.Scanner;
 
-public class Entry {
+public class App {
     public static void main(String[] args) {
         String expression = null;
 
@@ -21,7 +21,7 @@ public class Entry {
             expression = args[0];
         }
 
-        String result = Evaler1.evaluateExpression(Evaler1.tokenizeExpression(expression));
+        String result = "prova" + expression; // TODO
 
         System.out.println("Result: " + result);
     }

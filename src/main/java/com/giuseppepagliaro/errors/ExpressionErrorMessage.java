@@ -1,4 +1,4 @@
-package src.main.errors;
+package com.giuseppepagliaro.errors;
 
 public enum ExpressionErrorMessage {
     PARENTHESIS_NOT_CLOSED("Parenthesis opened at %1$s but never closed!"),

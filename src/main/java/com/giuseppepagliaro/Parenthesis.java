@@ -1,8 +1,8 @@
-package src.main;
+package com.giuseppepagliaro;
 
 import java.util.ArrayList;
 
-import src.main.errors.ExpressionErrorMessage;
+import com.giuseppepagliaro.errors.ExpressionErrorMessage;
 
 public class Parenthesis {
     private Parenthesis (int start, int end) {

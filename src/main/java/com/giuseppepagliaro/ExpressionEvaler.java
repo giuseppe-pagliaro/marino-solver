@@ -1,11 +1,11 @@
-package src.main;
+package com.giuseppepagliaro;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.StringTokenizer;
 
-import src.main.errors.NoMoreStepsException;
+import com.giuseppepagliaro.errors.NoMoreStepsException;
 
 public class ExpressionEvaler implements Evaler{
     public ExpressionEvaler(String expression) {
@@ -38,17 +38,17 @@ public class ExpressionEvaler implements Evaler{
     }
 
     @Override
-    public String getExpression() {
+    public String getSolution() {
         return expressionHistory.getLast();
     }
 
     @Override
-    public String getBaseExpression() {
+    public String getBase() {
         return expressionHistory.getFirst();
     }
 
     @Override
-    public LinkedList<String> getExpressionHistory() {
+    public LinkedList<String> getHistory() {
         return new LinkedList<>(expressionHistory);
     }
 

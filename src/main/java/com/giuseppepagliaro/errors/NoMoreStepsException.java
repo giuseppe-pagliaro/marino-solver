@@ -1,4 +1,4 @@
-package src.main.errors;
+package com.giuseppepagliaro.errors;
 
 public class NoMoreStepsException extends RuntimeException {
     public NoMoreStepsException() {
