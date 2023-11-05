@@ -7,7 +7,7 @@ package com.giuseppepagliaro.exceptions;
  * @since 1.0.0
  */
 public enum ProblemErrorMessage {
-    PARENTHESIS_NOT_CLOSED("Parenthesis opened at %1$s but never closed!"),
+    PARENTHESIS_NOT_CLOSED("Parenthesis should be closed at %1$s!"),
     PARENTHESIS_NEVER_OPENED("Parenthesis closed at %1$s but never opened!"),
     DIVIDING_BY_ZERO("Attempt to divide by zero at %1$s!"),
     CONSECUTIVE_OPERATION_SIGN("Two consecutive operation signs were found at %1$s!"),

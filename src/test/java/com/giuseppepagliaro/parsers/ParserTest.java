@@ -47,12 +47,12 @@ public class ParserTest {
         expectedLevelToMaxStep2.put(1, 0);
 
         expectedTree3 = new HashMap<>();
-        expectedTree3.put("L0", new ArrayList<>(Arrays.asList("L1S0", "+", "5")));
-        expectedTree3.put("L1S0", new ArrayList<>(Arrays.asList("3", "*", "2")));
+        expectedTree3.put("L0", new ArrayList<>(Arrays.asList("L1S0", "+", "5.0")));
+        expectedTree3.put("L1S0", new ArrayList<>(Arrays.asList("3.0", "*", "2.0")));
 
         expectedTree4 = new HashMap<>();
-        expectedTree4.put("L0", new ArrayList<>(Arrays.asList("3", "+", "L1S0")));
-        expectedTree4.put("L1S0", new ArrayList<>(Arrays.asList("2", "*", "5")));
+        expectedTree4.put("L0", new ArrayList<>(Arrays.asList("3.0", "+", "L1S0")));
+        expectedTree4.put("L1S0", new ArrayList<>(Arrays.asList("2.0", "*", "5.0")));
     }
 
     @Test
@@ -102,4 +102,6 @@ public class ParserTest {
         assertEquals(expectedTree4, parser4.getProblemTree());
         assertEquals(expectedLevelToMaxStep2, parser4.getLevelToMaxStepReached());
     }
+
+    // TODO add tests for sintax errors.
 }

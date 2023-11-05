@@ -63,6 +63,8 @@ public class Parser {
         ArrayList<String> cache = new ArrayList<>();
         String lastOperatorValue = null;
         String currentState = "I";
+
+        int parLevel = 0;
         int tokenInd = -1;
 
         while (probTokenizer.hasMoreTokens()) {
@@ -78,11 +80,13 @@ public class Parser {
 
                     switch (token) {
                         case "(":
+                            parLevel++;
                             moveDown(cache);
                             continue;
                         
                         case ")":
-                            moveUp(tokenInd);
+                            parLevel--;
+                            moveUp(cache, token, tokenInd);
                             continue;
                         
                         default: // Possible Number
@@ -96,16 +100,15 @@ public class Parser {
                         if (lastOperatorValue == null ||
                             operatorValueToOperator.get(token).compareLevel(operatorValueToOperator.get(lastOperatorValue)) == 0) {
                             cache.add(token);
-                        } else if (operatorValueToOperator.get(token).compareLevel(operatorValueToOperator.get(lastOperatorValue)) > 0) {
-                            memorize(cache);
-                            moveUp(tokenInd);
+                        } else if (operatorValueToOperator.get(token).compareLevel(operatorValueToOperator.get(lastOperatorValue)) < 0) {
+                            moveUp(cache, token, tokenInd);
                             cache.add(token);
                             memorize(cache);
                         } else {
                             memorize(cache, 1);
-                            cache.add(token);
                             moveDown(cache);
                             memorize(cache);
+                            memorize(token);
                         }
 
                         lastOperatorValue = token;
@@ -115,6 +118,7 @@ public class Parser {
 
                     switch (token) {
                         case "(":
+                            parLevel++;
                             cache.add("*");
                             memorize(cache);
                             moveDown(cache);
@@ -122,8 +126,8 @@ public class Parser {
                             continue;
                         
                         case ")":
-                            memorize(cache);
-                            moveUp(tokenInd);
+                            parLevel--;
+                            moveUp(cache, token, tokenInd);
                             currentState = "N";
                             continue;
                         
@@ -139,6 +143,7 @@ public class Parser {
 
                     switch (token) {
                         case "(":
+                            parLevel ++;
                             moveDown(cache);
                             currentState = "I";
                             continue;
@@ -162,11 +167,9 @@ public class Parser {
                     ProblemErrorMessage.PARENTHESIS_NOT_CLOSED.print(tokenInd);
             
             case "N":
-                if (currentLevel != 0)
-                    ProblemErrorMessage.PARENTHESIS_NOT_CLOSED.print(tokenInd);
-                else
-                    memorize(cache);
-                    return;
+                if (parLevel != 0) ProblemErrorMessage.PARENTHESIS_NOT_CLOSED.print(tokenInd);
+                memorize(cache);
+                return;
             
             case "OP":
                 ProblemErrorMessage.INCOMPLETE_OPERATION.print(tokenInd);
@@ -181,22 +184,47 @@ public class Parser {
     /* Automaton Action */
 
     private void moveDown(ArrayList<String> cache) {
+        // Adding step record.
         currentLevel++;
         int maxStep = levelToMaxStepReached.containsKey(currentLevel) ? levelToMaxStepReached.get(currentLevel) + 1 : 0;
         levelToMaxStepReached.put(currentLevel, maxStep);
-        cache.add(buildTreeHashString());
 
+        // Create new step.
+        String newHashStr = buildTreeHashString();
+        problemTree.put(newHashStr, new ArrayList<String>());
+
+        // Add reference of the new step to the tree.
         currentLevel--;
-        memorize(cache);
-
+        memorize(newHashStr);
         currentLevel++;
-        problemTree.put(buildTreeHashString(), new ArrayList<String>());
     }
 
-    private void moveUp(int tokenInd) {
-        if (currentLevel <= 0) ProblemErrorMessage.PARENTHESIS_NEVER_OPENED.print(tokenInd);
+    private void moveUp(ArrayList<String> cache, String token, int tokenInd) {
+        if (token.equals(")") && currentLevel <= 0) {
+            ProblemErrorMessage.PARENTHESIS_NEVER_OPENED.print(tokenInd);
+        }
+        else if (currentLevel <= 0) {
+            // Adding step record.
+            currentLevel++;
+            int maxStep = levelToMaxStepReached.containsKey(currentLevel) ? levelToMaxStepReached.get(currentLevel) + 1 : 0;
+            levelToMaxStepReached.put(currentLevel, maxStep);
+            
+            // Create new step and memorize cache.
+            String newHashStr = buildTreeHashString();
+            problemTree.put(buildTreeHashString(), new ArrayList<String>());
+            memorize(cache);
 
-        currentLevel--;
+            // Memorize new step reference.
+            currentLevel--;
+            memorize(newHashStr);
+        } else {
+            memorize(cache);
+            currentLevel--;
+        }
+    }
+
+    private void memorize(String constant) {
+        problemTree.get(buildTreeHashString()).add(constant);
     }
 
     private void memorize(ArrayList<String> cache) {
