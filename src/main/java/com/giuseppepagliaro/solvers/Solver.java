@@ -6,7 +6,7 @@ import com.giuseppepagliaro.exceptions.HistoryWasNotTrackedException;
 import com.giuseppepagliaro.exceptions.NoMoreStepsException;
 
 /**
- * main contract for problem solvers of the Marino Solver library
+ * Main contract for problem solvers of the Marino Solver library.
  * @author Giuseppe Pagliaro
  * @version 1.0.0
  * @since 1.0.0

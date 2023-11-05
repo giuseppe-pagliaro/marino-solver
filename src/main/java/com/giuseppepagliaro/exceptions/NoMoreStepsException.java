@@ -1,8 +1,8 @@
 package com.giuseppepagliaro.exceptions;
 
 /**
- * thrown when the solveStep method in {@link com.giuseppepagliaro.solvers.Solver} 
- * is called on a fully solved problem
+ * Thrown when the solveStep method in {@link com.giuseppepagliaro.solvers.Solver} 
+ * is called on a fully solved problem.
  * @author Giuseppe Pagliaro
  * @version 1.0.0
  * @since 1.0.0

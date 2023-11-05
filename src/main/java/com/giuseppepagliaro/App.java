@@ -4,6 +4,12 @@ import java.util.Scanner;
 
 import com.giuseppepagliaro.parsers.Parser;
 
+/**
+ * Entrypoint for Marino Solver.
+ * @author Giuseppe Pagliaro
+ * @version 1.0.0
+ * @since 1.0.0
+ */
 public class App {
     public static void main(String[] args) {
         String expression = null;

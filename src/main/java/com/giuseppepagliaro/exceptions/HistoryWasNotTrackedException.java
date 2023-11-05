@@ -1,8 +1,8 @@
 package com.giuseppepagliaro.exceptions;
 
 /**
- * thrown when attempting to get history details from a solver initialized with 
- * the saveHistory option to false
+ * Thrown when attempting to get history details from a solver initialized with 
+ * the saveHistory option to false.
  * @author Giuseppe Pagliaro
  * @version 1.0.0
  * @since 1.0.0

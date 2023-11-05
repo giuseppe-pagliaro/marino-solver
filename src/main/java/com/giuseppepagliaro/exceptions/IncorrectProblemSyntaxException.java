@@ -1,8 +1,8 @@
 package com.giuseppepagliaro.exceptions;
 
 /**
- * trown when an incorrect problem is fed to the solver. 
- * It can't be instantiated directly but only through {@link com.giuseppepagliaro.exceptions.ProblemErrorMessage}
+ * Trown when an incorrect problem is fed to the solver. 
+ * It can't be instantiated directly but only through {@link com.giuseppepagliaro.exceptions.ProblemErrorMessage}.
  * @author Giuseppe Pagliaro
  * @version 1.0.0
  * @since 1.0.0
