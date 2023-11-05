@@ -2,6 +2,8 @@ package com.giuseppepagliaro;
 
 import java.util.Scanner;
 
+import com.giuseppepagliaro.parsers.Parser;
+
 public class App {
     public static void main(String[] args) {
         String expression = null;
@@ -21,9 +23,9 @@ public class App {
             expression = args[0];
         }
 
-        String result = "prova" + expression; // TODO
+        Parser exprPars = new Parser(expression);
 
-        System.out.println("Result: " + result);
+        System.out.println("Result: " + exprPars.getProblemTree());
     }
 
     private static void printUsageStr() {
