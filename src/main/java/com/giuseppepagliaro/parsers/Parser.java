@@ -80,6 +80,7 @@ public class Parser {
 
                     switch (token) {
                         case "(":
+                            lastOperatorValue = null;
                             parLevel++;
                             moveDown(cache);
                             continue;
@@ -118,6 +119,7 @@ public class Parser {
 
                     switch (token) {
                         case "(":
+                            lastOperatorValue = null;
                             parLevel++;
                             cache.add("*");
                             memorize(cache);
@@ -143,7 +145,9 @@ public class Parser {
 
                     switch (token) {
                         case "(":
+                            lastOperatorValue = null;
                             parLevel ++;
+                            memorize(cache);
                             moveDown(cache);
                             currentState = "I";
                             continue;
@@ -161,8 +165,8 @@ public class Parser {
 
         switch (currentState) {
             case "I":
-                if (tokenInd == 0)
-                    ProblemErrorMessage.EMPTY_PROBLEM.print(tokenInd);
+                if (tokenInd == 0 || tokenInd == -1)
+                    ProblemErrorMessage.EMPTY_PROBLEM.print(0);
                 else
                     ProblemErrorMessage.PARENTHESIS_NOT_CLOSED.print(tokenInd);
             
