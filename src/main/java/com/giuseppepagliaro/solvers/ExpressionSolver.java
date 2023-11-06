@@ -1,54 +1,38 @@
-package com.giuseppepagliaro;
+package com.giuseppepagliaro.solvers;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.StringTokenizer;
 
-import com.giuseppepagliaro.errors.NoMoreStepsException;
+import com.giuseppepagliaro.exceptions.HistoryWasNotTrackedException;
+import com.giuseppepagliaro.exceptions.NoMoreStepsException;
+import com.giuseppepagliaro.parsers.Parser;
 
-public class ExpressionEvaler implements Evaler{
-    public ExpressionEvaler(String expression) {
-        createExpressionTree(expression);
-        
-        expressionHistory = new LinkedList<>();
+public class ExpressionSolver implements Solver{
+    public ExpressionSolver(String expression, boolean saveHistory) {
+        Parser parser = new Parser(expression);
+        expressionTree = parser.getProblemTree();
+
+        if (saveHistory) expressionHistory = new LinkedList<>();
         expressionHistory.add(expression);
     }
 
-    private static final String EXPRESSION_DELIMITERS = " +-*/()";
-    private static final String LEVEL_LABEL = "L";
-    private static final String STEP_LABEL = "S";
-
     private HashMap<String, ArrayList<String>> expressionTree;
     private LinkedList<String> expressionHistory;
+    private String latestStep;
 
-    private void createExpressionTree(String expression) {
-        StringTokenizer exprTokenizer = new StringTokenizer(expression.trim(), EXPRESSION_DELIMITERS, true);
-        HashMap<String, ArrayList<String>> expressionTree = new HashMap<>();
-
-        while (exprTokenizer.hasMoreTokens()) {
-            String token = exprTokenizer.nextToken();
-
-            if (token.equals(" ")) continue;
-
-            // TODO
-        }
-
-        this.expressionTree = expressionTree;
+    @Override
+    public String getLatestStep() {
+        return latestStep;
     }
 
     @Override
-    public String getSolution() {
-        return expressionHistory.getLast();
-    }
-
-    @Override
-    public String getBase() {
+    public String getBase() throws HistoryWasNotTrackedException {
         return expressionHistory.getFirst();
     }
 
     @Override
-    public LinkedList<String> getHistory() {
+    public LinkedList<String> getHistory() throws HistoryWasNotTrackedException {
         return new LinkedList<>(expressionHistory);
     }
 
