@@ -50,17 +50,30 @@ public class Parser {
 
     private int currentLevel;
 
+    /**
+     * Gets the problem representation, needed by a {@link com.giuseppepagliaro.solvers.Solver} child 
+     * to solve a problem.
+     * @return A {@link java.util.HashMap} containing the problem tree.
+     */
     public HashMap<String, ArrayList<String>> getProblemTree() {
         return new HashMap<>(problemTree);
     }
 
+    /**
+     * Gets the steps info of the problem, needed by a {@link com.giuseppepagliaro.solvers.Solver} child 
+     * to solve a problem.
+     * @return A {@link java.util.HashMap} containing the steps info.
+     */
     public HashMap<Integer, Integer> getLevelToMaxStepReached() {
         return new HashMap<>(levelToMaxStepReached);
     }
 
-    protected void createProblemTree(String problem, String delimiters, HashMap<String, ProblemOperator> operatorValueToOperator) {
+    private void createProblemTree(String problem, String delimiters, HashMap<String, ProblemOperator> operatorValueToOperator)
+        throws IncorrectProblemSyntaxException {
         StringTokenizer probTokenizer = new StringTokenizer(problem.trim(), delimiters, true);
         ArrayList<String> cache = new ArrayList<>();
+
+        String switchStr = null;
         String lastOperatorValue = null;
         String currentState = "I";
 
@@ -73,95 +86,99 @@ public class Parser {
 
             if (token.equals(" ")) continue;
 
-            switch (currentState) {
-                case "I":
-                    if (operatorValueToOperator.containsKey(token))
-                        ProblemErrorMessage.INCOMPLETE_OPERATION.print(tokenInd);
+            switchStr = buildSwitchStr(currentState, token, lastOperatorValue, operatorValueToOperator);
 
-                    switch (token) {
-                        case "(":
-                            lastOperatorValue = null;
-                            parLevel++;
-                            moveDown(cache);
-                            continue;
-                        
-                        case ")":
-                            parLevel--;
-                            moveUp(cache, token, tokenInd);
-                            continue;
-                        
-                        default: // Possible Number
-                            cacheNum(cache, token, tokenInd);
-                            currentState = "N";
-                            continue;
-                    }
+            switch (switchStr) {
+                // State I
+
+                case "I-op_":
+                    ProblemErrorMessage.INCOMPLETE_OPERATION.print(tokenInd);
+
+                case "I-(":
+                    lastOperatorValue = null;
+                    parLevel++;
+                    moveDown(cache);
+                    continue;
                 
-                case "N":
-                    if (operatorValueToOperator.containsKey(token)) {
-                        if (lastOperatorValue == null ||
-                            operatorValueToOperator.get(token).compareLevel(operatorValueToOperator.get(lastOperatorValue)) == 0) {
-                            cache.add(token);
-                        } else if (operatorValueToOperator.get(token).compareLevel(operatorValueToOperator.get(lastOperatorValue)) < 0) {
-                            moveUp(cache, token, tokenInd);
-                            cache.add(token);
-                            memorize(cache);
-                        } else {
-                            memorize(cache, 1);
-                            moveDown(cache);
-                            memorize(cache);
-                            memorize(token);
-                        }
-
-                        lastOperatorValue = token;
-                        currentState = "OP";
-                        continue;
-                    }
-
-                    switch (token) {
-                        case "(":
-                            lastOperatorValue = null;
-                            parLevel++;
-                            cache.add("*");
-                            memorize(cache);
-                            moveDown(cache);
-                            currentState = "I";
-                            continue;
-                        
-                        case ")":
-                            parLevel--;
-                            moveUp(cache, token, tokenInd);
-                            currentState = "N";
-                            continue;
-                        
-                        default: // Possible Number
-                            cache.add("*");
-                            cacheNum(cache, token, tokenInd);
-                            continue;
-                    }
+                case "I-)":
+                    parLevel--;
+                    moveUp(cache, token, tokenInd);
+                    continue;
                 
-                case "OP":
-                    if (operatorValueToOperator.containsKey(token))
-                        ProblemErrorMessage.INCOMPLETE_OPERATION.print(tokenInd);
+                case "I-n":
+                    cacheNum(cache, token, tokenInd);
+                    currentState = "N";
+                    continue;
 
-                    switch (token) {
-                        case "(":
-                            lastOperatorValue = null;
-                            parLevel ++;
-                            memorize(cache);
-                            moveDown(cache);
-                            currentState = "I";
-                            continue;
-                        
-                        case ")":
-                            ProblemErrorMessage.INCOMPLETE_OPERATION.print(tokenInd);
-                        
-                        default: // Possible Number
-                            cacheNum(cache, token, tokenInd);
-                            currentState = "N";
-                            continue;
-                    }
+                // State N
+                
+                case "N-ops":
+                    cache.add(token);
+                    lastOperatorValue = token;
+                    currentState = "OP";
+                    continue;
+                
+                case "N-opl":
+                    moveUp(cache, token, tokenInd);
+                    cache.add(token);
+                    memorize(cache);
+                    lastOperatorValue = token;
+                    currentState = "OP";
+                    continue;
+
+                case "N-oph":
+                    memorize(cache, 1);
+                    moveDown(cache);
+                    memorize(cache);
+                    memorize(token);
+                    lastOperatorValue = token;
+                    currentState = "OP";
+                    continue;
+                
+                case "N-(":
+                    lastOperatorValue = null;
+                    parLevel++;
+                    cache.add("*");
+                    memorize(cache);
+                    moveDown(cache);
+                    currentState = "I";
+                    continue;
+                
+                case "N-)":
+                    parLevel--;
+                    moveUp(cache, token, tokenInd);
+                    currentState = "N";
+                    continue;
+                
+                case "N-n":
+                    cache.add("*");
+                    cacheNum(cache, token, tokenInd);
+                    continue;
+                
+                // State OP
+
+                case "OP-op_":
+                    ProblemErrorMessage.INCOMPLETE_OPERATION.print(tokenInd);
+
+                case "OP-(":
+                    lastOperatorValue = null;
+                    parLevel ++;
+                    memorize(cache);
+                    moveDown(cache);
+                    currentState = "I";
+                    continue;
+                
+                case "OP-)":
+                    ProblemErrorMessage.INCOMPLETE_OPERATION.print(tokenInd);
+                
+                case "OP-n":
+                    cacheNum(cache, token, tokenInd);
+                    currentState = "N";
+                    continue;
             }
         }
+
+        // Halt Input Handler
 
         switch (currentState) {
             case "I":
@@ -180,12 +197,32 @@ public class Parser {
         }
     }
 
+    /* String Builders */
+
+    private String buildSwitchStr(String currentState, String token, String lastOperatorValue, HashMap<String, ProblemOperator> ops) {
+        if (ops.containsKey(token)) {
+            if (currentState != "N") return currentState + "-op_";
+
+            if (lastOperatorValue == null || ops.get(token).compareLevel(ops.get(lastOperatorValue)) == 0)
+                return "N-ops";
+            
+            if (ops.get(token).compareLevel(ops.get(lastOperatorValue)) < 0)
+                return "N-opl";
+            
+            return "N-oph";
+        }
+
+        if ("()".contains(token)) return currentState + "-" + token;
+        
+        return currentState + "-" + "n";
+    }
+
     private String buildTreeHashString() {
         if (currentLevel == 0) return LEVEL_LABEL + currentLevel;
         return LEVEL_LABEL + currentLevel + STEP_LABEL + levelToMaxStepReached.get(currentLevel);
     }
 
-    /* Automaton Action */
+    /* Automaton Actions */
 
     private void moveDown(ArrayList<String> cache) {
         // Adding step record.

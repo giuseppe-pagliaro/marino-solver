@@ -19,7 +19,7 @@ public enum ProblemErrorMessage {
 
     private final String partialErrorMessage;
 
-    public void print(int index) {
+    public void print(int index) throws IncorrectProblemSyntaxException {
         throw new IncorrectProblemSyntaxException(String.format(partialErrorMessage, ""+index));
     }
 }
