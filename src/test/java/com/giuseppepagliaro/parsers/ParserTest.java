@@ -23,6 +23,7 @@ public class ParserTest {
     HashMap<String, ArrayList<String>> expectedTree3;
     HashMap<String, ArrayList<String>> expectedTree4;
     HashMap<String, ArrayList<String>> expectedTree5;
+    HashMap<String, ArrayList<String>> expectedTree6;
 
     HashMap<Integer, Integer> expectedLevelToMaxStep1;
     HashMap<Integer, Integer> expectedLevelToMaxStep2;
@@ -49,6 +50,9 @@ public class ParserTest {
         expectedTree5 = new HashMap<>();
         expectedTree5.put("L0", new ArrayList<>(Arrays.asList("3.0", "*", "L1S0")));
         expectedTree5.put("L1S0", new ArrayList<>(Arrays.asList("2.0", "+", "3.0")));
+
+        expectedTree6 = new HashMap<>();
+        expectedTree6.put("L0", new ArrayList<>(Arrays.asList("3.0", "*", "5.0")));
 
         // Init LevelToMaxStep
 
@@ -114,6 +118,22 @@ public class ParserTest {
 
         assertEquals(expectedTree5, parser.getProblemTree());
         assertEquals(expectedLevelToMaxStep2, parser.getLevelToMaxStepReached());
+    }
+
+    @Test
+    public void testCreateProblemTree8() {
+        parser = new Parser("3(2+3)");
+
+        assertEquals(expectedTree5, parser.getProblemTree());
+        assertEquals(expectedLevelToMaxStep2, parser.getLevelToMaxStepReached());
+    }
+
+    @Test
+    public void testCreateProblemTree9() {
+        parser = new Parser("3 5");
+
+        assertEquals(expectedTree6, parser.getProblemTree());
+        assertEquals(expectedLevelToMaxStep1, parser.getLevelToMaxStepReached());
     }
 
     @Test
