@@ -1,79 +1,59 @@
 package com.giuseppepagliaro.solvers;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-
-import com.giuseppepagliaro.exceptions.HistoryWasNotTrackedException;
+import static com.giuseppepagliaro.commons.StringBuilders.buildTreeHash;
 import com.giuseppepagliaro.exceptions.NoMoreStepsException;
 import com.giuseppepagliaro.parsers.Parser;
 
-public class ExpressionSolver implements Solver{
-    public ExpressionSolver(String expression, boolean saveHistory) {
-        Parser parser = new Parser(expression);
-        expressionTree = parser.getProblemTree();
+/**
+ * The implementation of {@link com.giuseppepagliaro.solvers.Solver} for expressions.
+ */
+public class ExpressionSolver extends Solver{
+    public ExpressionSolver(Parser parser, boolean saveHistory) {
+        super(parser, saveHistory);
 
-        if (saveHistory) expressionHistory = new LinkedList<>();
-        expressionHistory.add(expression);
+        currentLevel = parser.getMaxLevelReached();
+        currentStep = 0;
+        solutionPrinted = false;
     }
 
-    private HashMap<String, ArrayList<String>> expressionTree;
-    private LinkedList<String> expressionHistory;
-    private String latestStep;
+    private int currentLevel;
+    private int currentStep;
+    private boolean solutionPrinted;
 
     @Override
-    public String getLatestStep() {
-        return latestStep;
-    }
-
-    @Override
-    public String getBase() throws HistoryWasNotTrackedException {
-        if (expressionHistory == null) throw new HistoryWasNotTrackedException();
-
-        return expressionHistory.getFirst();
-    }
-
-    @Override
-    public LinkedList<String> getHistory() throws HistoryWasNotTrackedException {
-        if (expressionHistory == null) throw new HistoryWasNotTrackedException();
+    public void solveStep() throws NoMoreStepsException {
+        if (!hasMoreSteps() && solutionPrinted && problemHistory != null)
+            throw new NoMoreStepsException();
         
-        return new LinkedList<>(expressionHistory);
-    }
+        if (!hasMoreSteps()) {
+            latestStep = "Solution: " + StepCalculator.toString((String[])problemTree.get("L0").toArray());
+            solutionPrinted = true;
+            return;
+        }
 
-    @Override
-    public boolean hasMoreSteps() {
-        return expressionTree.size() != 1 || expressionTree.get("l0").size() != 1;
-    }
+        int maxStepReached = levelToMaxStep.get(currentLevel);
 
-    @Override
-    public String solveStep() throws NoMoreStepsException {
-        if (!hasMoreSteps()) throw new NoMoreStepsException();
+        if (maxStepReached == -1) {
+            levelToMaxStep.remove(currentLevel);
+            currentLevel--;
+            maxStepReached = levelToMaxStep.get(currentLevel);
+            currentStep = 0;
+        }
 
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'solveStep'");
+        String[] step = (String[])problemTree.get(buildTreeHash(maxStepReached, levelToMaxStep)).toArray();
+        problemTree.remove(buildTreeHash(maxStepReached, levelToMaxStep));
+
+        String stepRes = StepCalculator.calculateStep(step);
+        int levelToChange = currentLevel == 0 ? 0 : currentLevel - 1;
+
+        int stepRefInd = 0;
+        while (problemTree.get(buildTreeHash(levelToChange, currentStep)).get(stepRefInd) != buildTreeHash(maxStepReached, levelToMaxStep)) {
+            stepRefInd++;
+        }
+
+        problemTree.get(buildTreeHash(levelToChange, currentStep)).set(stepRefInd, stepRes);
+
+        if (problemHistory == null) latestStep = "Solved: " + StepCalculator.toString(step);
+        else problemHistory.add(getProblem());
     }
 }
-
-/*
- *   " 2+ (22*3+2) /(2+142)  " ->
- * 
- *   "2+ (22*3+2) /(2+142)" ->
- * 
- *   [2, +, (, 22, *, 3, +, 2, ), /, (, 2, +, 142, )] -> (automa) ->
- *  
- *   L0: [2, +, L1S1]
- *   L1S1: [L2S1, /, L2S2]
- *   L2S1: [L3S1, +, 2]
- *   L2S2: [2, +, 142]
- *   L3S1: [22, *, 3]
- * 
- *   HashMap<String, ArrayList<String>>
- * 
- *   Esempio struttura dati:
- *   2+(2*(3+2)) diventa:
- * 
- *   L0: [2, +, L1S1]
- *   L1S1: [2, *, L1S2]
- *   L1S2: [3, +, 2]
- * 
- */

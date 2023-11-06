@@ -3,6 +3,8 @@ package com.giuseppepagliaro;
 import java.util.Scanner;
 
 import com.giuseppepagliaro.parsers.Parser;
+import com.giuseppepagliaro.solvers.ExpressionSolver;
+import com.giuseppepagliaro.solvers.Solver;
 
 /**
  * Entrypoint for Marino Solver.
@@ -29,9 +31,14 @@ public class App {
             expression = args[0];
         }
 
-        Parser exprPars = new Parser(expression);
+        Solver solver = new ExpressionSolver(new Parser(expression), false);
 
-        System.out.println("Result: " + exprPars.getProblemTree());
+        while (solver.hasMoreSteps()) {
+            solver.solveStep();
+            System.out.println(solver.getLatestStep());
+        }
+
+        System.out.println("Result: " + solver.getLatestStep());
     }
 
     private static void printUsageStr() {

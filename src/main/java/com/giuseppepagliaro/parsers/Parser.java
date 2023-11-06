@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.HashMap;
 import java.util.StringTokenizer;
 
+import static com.giuseppepagliaro.commons.StringBuilders.buildSwitchStr;
+import static com.giuseppepagliaro.commons.StringBuilders.buildTreeHash;
 import com.giuseppepagliaro.exceptions.IncorrectProblemSyntaxException;
 import com.giuseppepagliaro.exceptions.ProblemErrorMessage;
 
@@ -42,9 +44,6 @@ public class Parser {
     public Parser(String problem) throws IncorrectProblemSyntaxException {
         this(problem, ProblemOperator.selectAll(), true);
     }
-
-    private static final String LEVEL_LABEL = "L";
-    private static final String STEP_LABEL = "S";
 
     private HashMap<String, ArrayList<String>> problemTree;
     private HashMap<Integer, Integer> levelToMaxStepReached;
@@ -207,31 +206,6 @@ public class Parser {
         }
     }
 
-    /* String Builders */
-
-    private String buildSwitchStr(String currentState, String token, String lastOperatorValue, HashMap<String, ProblemOperator> ops) {
-        if (ops.containsKey(token)) {
-            if (currentState != "N") return currentState + "-op_";
-
-            if (lastOperatorValue == null || ops.get(token).compareLevel(ops.get(lastOperatorValue)) == 0)
-                return "N-ops";
-            
-            if (ops.get(token).compareLevel(ops.get(lastOperatorValue)) < 0)
-                return "N-opl";
-            
-            return "N-oph";
-        }
-
-        if ("()".contains(token)) return currentState + "-" + token;
-        
-        return currentState + "-" + "n";
-    }
-
-    private String buildTreeHashString() {
-        if (currentLevel == 0) return LEVEL_LABEL + currentLevel;
-        return LEVEL_LABEL + currentLevel + STEP_LABEL + levelToMaxStepReached.get(currentLevel);
-    }
-
     /* Automaton Actions */
 
     private void moveDown(ArrayList<String> cache) {
@@ -243,7 +217,7 @@ public class Parser {
         levelToMaxStepReached.put(currentLevel, maxStep);
 
         // Create new step.
-        String newHashStr = buildTreeHashString();
+        String newHashStr = buildTreeHash(currentLevel, levelToMaxStepReached);
         problemTree.put(newHashStr, new ArrayList<String>());
 
         // Add reference of the new step to the tree.
@@ -265,8 +239,8 @@ public class Parser {
             levelToMaxStepReached.put(currentLevel, maxStep);
             
             // Create new step and memorize cache.
-            String newHashStr = buildTreeHashString();
-            problemTree.put(buildTreeHashString(), new ArrayList<String>());
+            String newHashStr = buildTreeHash(currentLevel, levelToMaxStepReached);
+            problemTree.put(buildTreeHash(currentLevel, levelToMaxStepReached), new ArrayList<String>());
             memorize(cache);
 
             // Memorize new step reference.
@@ -279,7 +253,7 @@ public class Parser {
     }
 
     private void memorize(String constant) {
-        problemTree.get(buildTreeHashString()).add(constant);
+        problemTree.get(buildTreeHash(currentLevel, levelToMaxStepReached)).add(constant);
     }
 
     private void memorize(ArrayList<String> cache) {
@@ -288,7 +262,7 @@ public class Parser {
     
     private void memorize(ArrayList<String> cache, int offset) {
         List<String> poppedElements = cache.subList(0, cache.size() - offset);
-        problemTree.get(buildTreeHashString()).addAll(poppedElements);
+        problemTree.get(buildTreeHash(currentLevel, levelToMaxStepReached)).addAll(poppedElements);
         cache.removeAll(poppedElements);
     }
 
