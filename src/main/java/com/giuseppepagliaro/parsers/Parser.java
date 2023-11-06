@@ -24,6 +24,7 @@ public class Parser {
         levelToMaxStepReached.put(0, 0);
 
         currentLevel = 0;
+        maxLevelReached = 0;
 
         String delimiters = " ";
         HashMap<String, ProblemOperator> operatorValueToOperator = new HashMap<>();
@@ -49,6 +50,7 @@ public class Parser {
     private HashMap<Integer, Integer> levelToMaxStepReached;
 
     private int currentLevel;
+    private int maxLevelReached;
 
     /**
      * Gets the problem representation, needed by a {@link com.giuseppepagliaro.solvers.Solver} child 
@@ -66,6 +68,14 @@ public class Parser {
      */
     public HashMap<Integer, Integer> getLevelToMaxStepReached() {
         return new HashMap<>(levelToMaxStepReached);
+    }
+
+    /**
+     * Gets the depth of the problem tree.
+     * @return The number of the maximum level reached.
+     */
+    public int getMaxLevelReached() {
+        return maxLevelReached;
     }
 
     private void createProblemTree(String problem, String delimiters, HashMap<String, ProblemOperator> operatorValueToOperator)
@@ -225,6 +235,8 @@ public class Parser {
     /* Automaton Actions */
 
     private void moveDown(ArrayList<String> cache) {
+        maxLevelReached++;
+
         // Adding step record.
         currentLevel++;
         int maxStep = levelToMaxStepReached.containsKey(currentLevel) ? levelToMaxStepReached.get(currentLevel) + 1 : 0;
@@ -245,6 +257,8 @@ public class Parser {
             ProblemErrorMessage.PARENTHESIS_NEVER_OPENED.print(tokenInd);
         }
         else if (currentLevel <= 0) {
+            maxLevelReached++;
+            
             // Adding step record.
             currentLevel++;
             int maxStep = levelToMaxStepReached.containsKey(currentLevel) ? levelToMaxStepReached.get(currentLevel) + 1 : 0;

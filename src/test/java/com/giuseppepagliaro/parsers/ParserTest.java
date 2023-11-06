@@ -70,6 +70,7 @@ public class ParserTest {
 
         assertEquals(expectedTree1, parser.getProblemTree());
         assertEquals(expectedLevelToMaxStep1, parser.getLevelToMaxStepReached());
+        assertEquals(0, parser.getMaxLevelReached());
     }
 
     @Test
@@ -78,6 +79,7 @@ public class ParserTest {
 
         assertEquals(expectedTree2, parser.getProblemTree());
         assertEquals(expectedLevelToMaxStep2, parser.getLevelToMaxStepReached());
+        assertEquals(1, parser.getMaxLevelReached());
     }
 
     @Test
@@ -86,6 +88,7 @@ public class ParserTest {
 
         assertEquals(expectedTree1, parser.getProblemTree());
         assertEquals(expectedLevelToMaxStep1, parser.getLevelToMaxStepReached());
+        assertEquals(0, parser.getMaxLevelReached());
     }
 
     @Test
@@ -94,6 +97,7 @@ public class ParserTest {
 
         assertEquals(expectedTree1, parser.getProblemTree());
         assertEquals(expectedLevelToMaxStep1, parser.getLevelToMaxStepReached());
+        assertEquals(0, parser.getMaxLevelReached());
     }
 
     @Test
@@ -102,6 +106,7 @@ public class ParserTest {
 
         assertEquals(expectedTree3, parser.getProblemTree());
         assertEquals(expectedLevelToMaxStep2, parser.getLevelToMaxStepReached());
+        assertEquals(1, parser.getMaxLevelReached());
     }
 
     @Test
@@ -110,6 +115,7 @@ public class ParserTest {
 
         assertEquals(expectedTree4, parser.getProblemTree());
         assertEquals(expectedLevelToMaxStep2, parser.getLevelToMaxStepReached());
+        assertEquals(1, parser.getMaxLevelReached());
     }
 
     @Test
@@ -118,6 +124,7 @@ public class ParserTest {
 
         assertEquals(expectedTree5, parser.getProblemTree());
         assertEquals(expectedLevelToMaxStep2, parser.getLevelToMaxStepReached());
+        assertEquals(1, parser.getMaxLevelReached());
     }
 
     @Test
@@ -126,6 +133,7 @@ public class ParserTest {
 
         assertEquals(expectedTree5, parser.getProblemTree());
         assertEquals(expectedLevelToMaxStep2, parser.getLevelToMaxStepReached());
+        assertEquals(1, parser.getMaxLevelReached());
     }
 
     @Test
@@ -134,6 +142,7 @@ public class ParserTest {
 
         assertEquals(expectedTree6, parser.getProblemTree());
         assertEquals(expectedLevelToMaxStep1, parser.getLevelToMaxStepReached());
+        assertEquals(0, parser.getMaxLevelReached());
     }
 
     @Test

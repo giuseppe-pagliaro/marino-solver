@@ -28,11 +28,15 @@ public class ExpressionSolver implements Solver{
 
     @Override
     public String getBase() throws HistoryWasNotTrackedException {
+        if (expressionHistory == null) throw new HistoryWasNotTrackedException();
+
         return expressionHistory.getFirst();
     }
 
     @Override
     public LinkedList<String> getHistory() throws HistoryWasNotTrackedException {
+        if (expressionHistory == null) throw new HistoryWasNotTrackedException();
+        
         return new LinkedList<>(expressionHistory);
     }
 
