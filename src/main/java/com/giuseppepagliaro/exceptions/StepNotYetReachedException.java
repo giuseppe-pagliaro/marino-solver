@@ -7,8 +7,8 @@ package com.giuseppepagliaro.exceptions;
  * @version 1.0.0
  * @since 1.0.0
  */
-public class HistoryWasNotTrackedException extends RuntimeException {
-    public HistoryWasNotTrackedException() {
-        super("Attempting to get history details from a solver initialized with the saveHistory option to false.");
+public class StepNotYetReachedException extends RuntimeException {
+    public StepNotYetReachedException() {
+        super("The time given has not yet been reached.");
     }
 }

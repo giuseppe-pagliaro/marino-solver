@@ -1,8 +1,9 @@
-package com.giuseppepagliaro.solvers;
+package com.giuseppepagliaro.commons;
 
 import java.lang.Math;
 
 import com.giuseppepagliaro.exceptions.InvalidStepException;
+import com.giuseppepagliaro.solvers.Solver;
 
 /**
  * Calculates the steps for a {@link com.giuseppepagliaro.solvers.Solver} child.

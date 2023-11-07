@@ -1,14 +1,12 @@
 package com.giuseppepagliaro.solvers;
 
-import static com.giuseppepagliaro.commons.StringBuilders.buildTreeHash;
-
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
 
-import com.giuseppepagliaro.exceptions.HistoryWasNotTrackedException;
+import com.giuseppepagliaro.commons.ProblemStep;
+import com.giuseppepagliaro.exceptions.StepNotYetReachedException;
 import com.giuseppepagliaro.exceptions.NoMoreStepsException;
-import com.giuseppepagliaro.parsers.Parser;
+import com.giuseppepagliaro.exceptions.StepNotYetSolvedException;
+import com.giuseppepagliaro.parsers.ObjectOrientedParser;
 
 /**
  * Main contract for problem solvers of the Marino Solver library.
@@ -17,87 +15,91 @@ import com.giuseppepagliaro.parsers.Parser;
  * @since 1.0.0
  */
 public abstract class Solver {
-    public Solver(Parser parser, boolean saveHistory) {
-        problemTree = parser.getProblemTree();
-        levelToMaxStep = parser.getLevelToMaxStepReached();
-
-        if (saveHistory) {
-            problemHistory = new LinkedList<>();
-
-            String problem = getProblem();
-            problemHistory.add(problem);
-            latestStep = problem;
-        } else {
-            latestStep = "Not Yet Solved";
-        }
+    public Solver(ObjectOrientedParser parser, boolean saveHistory) {
+        PARSER = parser;
+        maxTime = 0;
     }
-
-    protected HashMap<String, ArrayList<String>> problemTree;
-    protected HashMap<Integer, Integer> levelToMaxStep;
-    protected LinkedList<String> problemHistory;
-    protected String latestStep;
+    
+    protected final ObjectOrientedParser PARSER;
+    private int maxTime;
 
     /**
-     * gets the latest step of the problem or the solution if it's solved
-     * @return a String containing the step
+     * Gets the step at the given time (if reached).
+     * @return A string containing the step.
+     * @throws
      */
-    public String getLatestStep() {
-        return latestStep;
+    public String getStep(int time) throws StepNotYetReachedException {
+        if (time > maxTime) throw new StepNotYetReachedException();
+
+        return getProblem(PARSER.getProblemTree().get("L0"), time);
     }
     
     /**
-     * gets the original state of the problem
-     * @return a String containing the problem
+     * Gets the original state of the problem.
+     * @return A string containing the problem.
      */
-    public String getBase() throws HistoryWasNotTrackedException {
-        if (problemHistory == null) throw new HistoryWasNotTrackedException();
+    public String getBase() {
+        return getStep(0);
+    }
 
-        return problemHistory.getFirst();
+    public String getResult() throws StepNotYetReachedException {
+        if (hasMoreSteps()) throw new StepNotYetReachedException();
+
+        return getStep(maxTime);
     }
 
     /**
-     * gets all the steps executed so far
-     * @return a {@link java.util.LinkedList} containing the steps from oldest to newest
+     * Gets all the steps executed so far.
+     * @return A {@link java.util.LinkedList} containing the steps from oldest to newest:
      */
-    public LinkedList<String> getHistory() throws HistoryWasNotTrackedException {
-        if (problemHistory == null) throw new HistoryWasNotTrackedException();
+    public LinkedList<String> getHistory() throws StepNotYetReachedException {
+        LinkedList<String> history = new LinkedList<>();
 
-        return new LinkedList<>(problemHistory);
+        for (int i = 0; i < maxTime; i++) {
+            history.add(getStep(i));
+        }
+
+        return history;
     }
 
     /**
-     * checks if the problem is solved or not
-     * @return "true" if the problem has more steps, "false" if it doesn't
+     * Checks if the problem is solved or not.
+     * @return "true" if the problem has more steps, "false" if it doesn't.
      */
     public boolean hasMoreSteps() {
-        return problemTree.size() != 1 || problemTree.get("l0").size() != 1;
+        try {
+            PARSER.getProblemTree().get("l0").getResult();
+            return true;
+        } catch (StepNotYetSolvedException e) {
+            return false;
+        }
     }
 
     /**
-     * solves the next due step of the problem
-     * @return a string containing the problem up to that point
-     * @throws NoMoreStepsException if the problem is already fully solved
+     * Solves the next due step of the problem (should call incTime).
+     * @return A string containing the problem up to that point.
+     * @throws NoMoreStepsException if the problem is already fully solved.
      */
     public abstract void solveStep() throws NoMoreStepsException;
 
     /**
-     * Turns the problem tree into a string.
+     * Turns the problem tree into a string using dfs.
      * @return A string containing the problem.
      */
-    protected String getProblem() {
-        return dfsGetProblem("", 0, 0, 0);
+    
+    protected void incTime() {
+        maxTime++;
     }
 
-    private String dfsGetProblem(String problem, int level, int step, int tokenInd) {
-        if (level == 0 && step == levelToMaxStep.get(0)) return problem;
-
-        int levelToUpdate = level == 0 ? 0 : level - 1;
-        String hashStepToUpdate = buildTreeHash(levelToUpdate, step);
-        String token = problemTree.get(hashStepToUpdate).get(tokenInd);
-
-        if (token != buildTreeHash(level, levelToMaxStep))
-            return dfsGetProblem(problem + token, level, tokenInd == 2 ? step + 1 : step, tokenInd + 1);
-        
-        return dfsGetProblem(problem, levelToUpdate, step, tokenInd); // TODO fai caso incrementa lv
+    protected int getMaxTime() {
+        return maxTime;
     }
+
+    /**
+     * Turns a step sub-tree into a string representing the step at a given time.
+     * @param step The step to convert.
+     * @param time The time at which we need the step.
+     * @return A string representing the step.
+     */
+    protected abstract String getProblem(ProblemStep step, int time);
 }

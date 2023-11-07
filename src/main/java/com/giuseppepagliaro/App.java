@@ -2,7 +2,7 @@ package com.giuseppepagliaro;
 
 import java.util.Scanner;
 
-import com.giuseppepagliaro.parsers.Parser;
+import com.giuseppepagliaro.parsers.ObjectOrientedParser;
 import com.giuseppepagliaro.solvers.ExpressionSolver;
 import com.giuseppepagliaro.solvers.Solver;
 
@@ -31,14 +31,13 @@ public class App {
             expression = args[0];
         }
 
-        Solver solver = new ExpressionSolver(new Parser(expression), false);
+        Solver solver = new ExpressionSolver(new ObjectOrientedParser(expression), false);
 
         while (solver.hasMoreSteps()) {
             solver.solveStep();
-            System.out.println(solver.getLatestStep());
         }
 
-        System.out.println("Result: " + solver.getLatestStep());
+        System.out.println("Result: " + solver.getResult());
     }
 
     private static void printUsageStr() {

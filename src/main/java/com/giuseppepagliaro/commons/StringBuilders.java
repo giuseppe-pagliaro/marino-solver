@@ -9,6 +9,7 @@ public final class StringBuilders {
 
     private static final String LEVEL_LABEL = "L";
     private static final String STEP_LABEL = "S";
+    private static final String PARENTHESIS_LABEL = "P";
 
     public static String buildSwitchStr(String currentState, String token, String lastOperatorValue, HashMap<String, ProblemOperator> ops) {
         if (ops.containsKey(token)) {
@@ -36,5 +37,13 @@ public final class StringBuilders {
     public static String buildTreeHash(int currentLevel, int currentStep) {
         if (currentLevel == 0) return LEVEL_LABEL + currentLevel;
         return LEVEL_LABEL + currentLevel + STEP_LABEL + currentStep;
+    }
+
+    public static boolean isATreeHash(String token) {
+        return token.contains(LEVEL_LABEL);
+    }
+
+    public static boolean isParenthesis(String token) {
+        return token.contains(PARENTHESIS_LABEL);
     }
 }
