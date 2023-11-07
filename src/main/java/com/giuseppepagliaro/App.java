@@ -2,7 +2,7 @@ package com.giuseppepagliaro;
 
 import java.util.Scanner;
 
-import com.giuseppepagliaro.parsers.ObjectOrientedParser;
+import com.giuseppepagliaro.parsers.Parser;
 import com.giuseppepagliaro.solvers.ExpressionSolver;
 import com.giuseppepagliaro.solvers.Solver;
 
@@ -31,7 +31,7 @@ public class App {
             expression = args[0];
         }
 
-        Solver solver = new ExpressionSolver(new ObjectOrientedParser(expression), false);
+        Solver solver = new ExpressionSolver(new Parser(expression));
 
         while (solver.hasMoreSteps()) {
             solver.solveStep();
@@ -41,6 +41,6 @@ public class App {
     }
 
     private static void printUsageStr() {
-        throw new IllegalArgumentException("usage: Evaler [string_to_evaluate]");
+        throw new IllegalArgumentException("usage: MarinoSolver [problem_to_evaluate]");
     }
 }

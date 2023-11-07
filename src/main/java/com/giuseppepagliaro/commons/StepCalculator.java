@@ -3,10 +3,12 @@ package com.giuseppepagliaro.commons;
 import java.lang.Math;
 
 import com.giuseppepagliaro.exceptions.InvalidStepException;
-import com.giuseppepagliaro.solvers.Solver;
 
 /**
  * Calculates the steps for a {@link com.giuseppepagliaro.solvers.Solver} child.
+ * @author Giuseppe Pagliaro
+ * @version 1.1.0
+ * @since 1.0.0
  */
 public final class StepCalculator {
     private StepCalculator() {}
@@ -94,20 +96,5 @@ public final class StepCalculator {
             default:
                 throw new InvalidStepException();
         }
-    }
-
-    /**
-     * Returns a human-readable version of the step.
-     * @param step a default Java array contaning containing the step tokens.
-     * @return The step as a string.
-     */
-    public static String toString(String[] step) {
-        String stepStr = "";
-
-        for (String token : step) {
-            stepStr += token;
-        }
-
-        return stepStr;
     }
 }

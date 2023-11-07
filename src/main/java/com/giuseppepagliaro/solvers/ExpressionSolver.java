@@ -4,7 +4,7 @@ import com.giuseppepagliaro.commons.ProblemStep;
 import com.giuseppepagliaro.commons.StringBuilders;
 import com.giuseppepagliaro.exceptions.NoMoreStepsException;
 import com.giuseppepagliaro.exceptions.StepNotYetSolvedException;
-import com.giuseppepagliaro.parsers.ObjectOrientedParser;
+import com.giuseppepagliaro.parsers.Parser;
 
 /**
  * The implementation of {@link com.giuseppepagliaro.solvers.Solver} for expressions.
@@ -13,8 +13,8 @@ import com.giuseppepagliaro.parsers.ObjectOrientedParser;
  * @since 1.0.0
  */
 public class ExpressionSolver extends Solver {
-    public ExpressionSolver(ObjectOrientedParser parser, boolean saveHistory) {
-        super(parser, saveHistory);
+    public ExpressionSolver(Parser parser) {
+        super(parser);
 
         currentLevel = PARSER.getMaxLevelReached();
         currentStep = 0;
@@ -41,6 +41,8 @@ public class ExpressionSolver extends Solver {
 
     @Override
     protected String getProblem(ProblemStep step, int time) {
+        // Using DFS
+        
         try {
             if (step.getTimeSolved() <= time) return step.getResult();
         } catch (StepNotYetSolvedException e) { }
@@ -51,7 +53,7 @@ public class ExpressionSolver extends Solver {
             if (StringBuilders.isATreeHash(token)) {
                 String tokenValue = getProblem(PARSER.getProblemTree().get(token), time);
 
-                if (StringBuilders.isParenthesis(token)) {
+                if (step.IS_PARENTHESIS) {
                     expressionStr += "(" + tokenValue + ")";
                 } else {
                     expressionStr += tokenValue;

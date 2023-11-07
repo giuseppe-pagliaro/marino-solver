@@ -9,12 +9,14 @@ import com.giuseppepagliaro.exceptions.StepNotYetSolvedException;
  * Represents a branch of the problem tree returned by 
  * a {@link com.giuseppepagliaro.parsers.Parser}.
  * @author Giuseppe Pagliaro
- * @version 1.1.0
- * @since 1.1.0
+ * @version 1.0.0
+ * @since 1.0.0
  */
 public class ProblemStep {
-    public ProblemStep(String hash) {
+    public ProblemStep(String hash, boolean isParenthesis) {
         this.hash = hash;
+        IS_PARENTHESIS = isParenthesis;
+
         expression = new ArrayList<>();
     }
 
@@ -23,10 +25,22 @@ public class ProblemStep {
     private String result;
     private int timeSolved;
 
+    public final boolean IS_PARENTHESIS;
+
+    /**
+     * Adds the given tokens to the step.
+     * @param newTokens The tokens to add.
+     */
     public void memorize(List<String> newTokens) {
         expression.addAll(new ArrayList<>(newTokens));
     }
 
+    /**
+     * Solves the step.
+     * @param time The time at which the step was solved, 
+     * used to determine when to show the solved step when the expression string 
+     * is requested.
+     */
     public void solve(int time) {
         result = StepCalculator.calculateStep((String[])expression.toArray());
         timeSolved = time;
@@ -43,11 +57,14 @@ public class ProblemStep {
 
         return timeSolved;
     }
-
+    
     public ArrayList<String> getExpression() {
         return new ArrayList<>(expression);
     }
 
+    /**
+     * Returns the step in string form.
+     */
     public String getExpressionStr() {
         String stepStr = "";
 
@@ -85,6 +102,6 @@ public class ProblemStep {
 
     @Override
     public String toString() {
-        return hash + ": " + getExpression() + " = " + result == null ? "(Not Yet Calculated)" : result;
+        return hash + ": " + getExpressionStr() + " = " + result == null ? "(Not Yet Calculated)" : result;
     }
 }

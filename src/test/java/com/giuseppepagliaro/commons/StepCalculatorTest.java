@@ -1,4 +1,4 @@
-package com.giuseppepagliaro.solvers;
+package com.giuseppepagliaro.commons;
 
 import org.junit.Test;
 

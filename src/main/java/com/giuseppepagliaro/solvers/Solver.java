@@ -6,7 +6,7 @@ import com.giuseppepagliaro.commons.ProblemStep;
 import com.giuseppepagliaro.exceptions.StepNotYetReachedException;
 import com.giuseppepagliaro.exceptions.NoMoreStepsException;
 import com.giuseppepagliaro.exceptions.StepNotYetSolvedException;
-import com.giuseppepagliaro.parsers.ObjectOrientedParser;
+import com.giuseppepagliaro.parsers.Parser;
 
 /**
  * Main contract for problem solvers of the Marino Solver library.
@@ -15,18 +15,19 @@ import com.giuseppepagliaro.parsers.ObjectOrientedParser;
  * @since 1.0.0
  */
 public abstract class Solver {
-    public Solver(ObjectOrientedParser parser, boolean saveHistory) {
+    public Solver(Parser parser) {
         PARSER = parser;
         maxTime = 0;
     }
     
-    protected final ObjectOrientedParser PARSER;
+    protected final Parser PARSER;
     private int maxTime;
 
     /**
      * Gets the step at the given time (if reached).
+     * @param time The time corresponding to the desired step.
      * @return A string containing the step.
-     * @throws
+     * @throws StepNotYetReachedException if time is greater than maxTime.
      */
     public String getStep(int time) throws StepNotYetReachedException {
         if (time > maxTime) throw new StepNotYetReachedException();
@@ -42,6 +43,11 @@ public abstract class Solver {
         return getStep(0);
     }
 
+    /**
+     * Gets the result of the problem.
+     * @return A string containing the problem.
+     * @throws StepNotYetReachedException if the problem is not solved yet.
+     */
     public String getResult() throws StepNotYetReachedException {
         if (hasMoreSteps()) throw new StepNotYetReachedException();
 
@@ -49,8 +55,8 @@ public abstract class Solver {
     }
 
     /**
-     * Gets all the steps executed so far.
-     * @return A {@link java.util.LinkedList} containing the steps from oldest to newest:
+     * Gets all the steps executed so far (warning: it has a high time complexity).
+     * @return A {@link java.util.LinkedList} containing the steps from oldest to newest.
      */
     public LinkedList<String> getHistory() throws StepNotYetReachedException {
         LinkedList<String> history = new LinkedList<>();
@@ -64,7 +70,6 @@ public abstract class Solver {
 
     /**
      * Checks if the problem is solved or not.
-     * @return "true" if the problem has more steps, "false" if it doesn't.
      */
     public boolean hasMoreSteps() {
         try {
@@ -82,11 +87,6 @@ public abstract class Solver {
      */
     public abstract void solveStep() throws NoMoreStepsException;
 
-    /**
-     * Turns the problem tree into a string using dfs.
-     * @return A string containing the problem.
-     */
-    
     protected void incTime() {
         maxTime++;
     }
@@ -98,7 +98,7 @@ public abstract class Solver {
     /**
      * Turns a step sub-tree into a string representing the step at a given time.
      * @param step The step to convert.
-     * @param time The time at which we need the step.
+     * @param time The time at which the step is needed.
      * @return A string representing the step.
      */
     protected abstract String getProblem(ProblemStep step, int time);
