@@ -1,7 +1,7 @@
-package com.giuseppepagliaro.exceptions;
+package com.giuseppepagliaro.marinosolver.exceptions;
 
 /**
- * Thrown when the solveStep method in {@link com.giuseppepagliaro.solvers.Solver} 
+ * Thrown when the solveStep method in {@link com.giuseppepagliaro.marinosolver.solvers.Solver} 
  * is called on a fully solved problem.
  * @author Giuseppe Pagliaro
  * @version 1.0.0

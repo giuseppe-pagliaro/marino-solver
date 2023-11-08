@@ -1,8 +1,8 @@
-package com.giuseppepagliaro.parsers;
+package com.giuseppepagliaro.marinosolver.parsers;
 
 /**
  * Defines all the available operators that can be injected in a 
- * {@link com.giuseppepagliaro.parsers.Parser} instance.
+ * {@link com.giuseppepagliaro.marinosolver.parsers.Parser} instance.
  * @author Giuseppe Pagliaro
  * @version 1.0.0
  * @since 1.0.0

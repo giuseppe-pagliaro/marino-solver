@@ -1,13 +1,13 @@
-package com.giuseppepagliaro.solvers;
+package com.giuseppepagliaro.marinosolver.solvers;
 
 import java.util.LinkedList;
 
-import com.giuseppepagliaro.commons.ProblemStep;
-import com.giuseppepagliaro.commons.StringBuilders;
-import com.giuseppepagliaro.exceptions.StepNotYetReachedException;
-import com.giuseppepagliaro.exceptions.NoMoreStepsException;
-import com.giuseppepagliaro.exceptions.StepNotYetSolvedException;
-import com.giuseppepagliaro.parsers.Parser;
+import com.giuseppepagliaro.marinosolver.commons.ProblemStep;
+import com.giuseppepagliaro.marinosolver.commons.StringBuilders;
+import com.giuseppepagliaro.marinosolver.exceptions.StepNotYetReachedException;
+import com.giuseppepagliaro.marinosolver.exceptions.NoMoreStepsException;
+import com.giuseppepagliaro.marinosolver.exceptions.StepNotYetSolvedException;
+import com.giuseppepagliaro.marinosolver.parsers.Parser;
 
 /**
  * Main contract for problem solvers of the Marino Solver library.
@@ -56,10 +56,10 @@ public abstract class Solver {
     }
 
     /**
-     * Gets all the steps executed so far (warning: it has a high time complexity).
+     * Gets all the steps executed so far.
      * @return A {@link java.util.LinkedList} containing the steps from oldest to newest.
      */
-    public LinkedList<String> getHistory() throws StepNotYetReachedException {
+    public LinkedList<String> getHistory() {
         LinkedList<String> history = new LinkedList<>();
 
         for (int i = 0; i < maxTime; i++) {

@@ -1,4 +1,4 @@
-package com.giuseppepagliaro.solvers;
+package com.giuseppepagliaro.marinosolver.solvers;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -8,15 +8,18 @@ import java.util.Arrays;
 
 import org.junit.Test;
 
-import com.giuseppepagliaro.exceptions.StepNotYetReachedException;
-import com.giuseppepagliaro.parsers.Parser;
+import com.giuseppepagliaro.marinosolver.exceptions.IncorrectProblemSyntaxException;
+import com.giuseppepagliaro.marinosolver.exceptions.StepNotYetReachedException;
+import com.giuseppepagliaro.marinosolver.parsers.Parser;
 
 /**
- * Unit tests for the exceptions of {@link com.giuseppepagliaro.solvers.Solver}.
+ * Unit tests for the exceptions of {@link com.giuseppepagliaro.marinosolver.solvers.Solver}.
  */
 public class SolverExceptionsTest {
     public SolverExceptionsTest() {
-        solver = new ExpressionSolver(new Parser("(2+3)*2"));
+        try {
+            solver = new ExpressionSolver(new Parser("(2+3)*2"));
+        } catch (IncorrectProblemSyntaxException e ) { }
         solver.solveStep();
     }
 
@@ -30,8 +33,7 @@ public class SolverExceptionsTest {
     @Test
     public void testGetHistory() {
         LinkedList<String> expectedHistory = new LinkedList<>(Arrays.asList(
-            "(2+3)*2",
-            "5.0*2"
+            "(2.0+3.0)*2.0"
         ));
 
         assertEquals(expectedHistory, solver.getHistory());
@@ -44,6 +46,6 @@ public class SolverExceptionsTest {
 
     @Test
     public void testGetStep() {
-        assertEquals("5.0*2", solver.getStep(1));
+        assertEquals("5.0*2.0", solver.getStep(1));
     }
 }

@@ -1,11 +1,12 @@
-package com.giuseppepagliaro;
+package com.giuseppepagliaro.marinosolver;
 
 import java.util.Scanner;
 import java.util.Iterator;
 
-import com.giuseppepagliaro.parsers.Parser;
-import com.giuseppepagliaro.solvers.ExpressionSolver;
-import com.giuseppepagliaro.solvers.Solver;
+import com.giuseppepagliaro.marinosolver.exceptions.IncorrectProblemSyntaxException;
+import com.giuseppepagliaro.marinosolver.parsers.Parser;
+import com.giuseppepagliaro.marinosolver.solvers.ExpressionSolver;
+import com.giuseppepagliaro.marinosolver.solvers.Solver;
 
 /**
  * Entrypoint for Marino Solver.
@@ -32,7 +33,14 @@ public class App {
             expression = args[0];
         }
 
-        Solver solver = new ExpressionSolver(new Parser(expression));
+        Solver solver;
+
+        try {
+            solver = new ExpressionSolver(new Parser(expression));
+        } catch (IncorrectProblemSyntaxException e) {
+            System.err.println("Syntax error detected: " + e.getMessage());
+            return;
+        }
 
         while (solver.hasMoreSteps()) {
             solver.solveStep();

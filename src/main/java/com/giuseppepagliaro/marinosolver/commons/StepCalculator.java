@@ -1,9 +1,10 @@
-package com.giuseppepagliaro.commons;
+package com.giuseppepagliaro.marinosolver.commons;
 
 import java.lang.Math;
 
 /**
- * Calculates the steps for a {@link com.giuseppepagliaro.solvers.Solver} child.
+ * Calculates the value of simple operations provided in string form, 
+ * used by {@link com.giuseppepagliaro.marinosolver.commons.ProblemStep}.
  * @author Giuseppe Pagliaro
  * @version 1.1.0
  * @since 1.0.0

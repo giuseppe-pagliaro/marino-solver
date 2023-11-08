@@ -1,4 +1,4 @@
-package com.giuseppepagliaro.parsers;
+package com.giuseppepagliaro.marinosolver.parsers;
 
 import static org.junit.Assert.assertEquals;
 
@@ -7,11 +7,11 @@ import java.util.HashMap;
 
 import org.junit.Test;
 
-import com.giuseppepagliaro.commons.ProblemStep;
-import com.giuseppepagliaro.exceptions.IncorrectProblemSyntaxException;
+import com.giuseppepagliaro.marinosolver.commons.ProblemStep;
+import com.giuseppepagliaro.marinosolver.exceptions.IncorrectProblemSyntaxException;
 
 /**
- * Unit tests for {@link com.giuseppepagliaro.parsers.Parser}.
+ * Unit tests for {@link com.giuseppepagliaro.marinosolver.parsers.Parser}.
  */
 public class ParserTest {
     public ParserTest() {
@@ -85,7 +85,9 @@ public class ParserTest {
 
     @Test
     public void testCreateProblemTree1() {
-        parser = new Parser("3+2");
+        try {
+            parser = new Parser("3+2");
+        } catch (IncorrectProblemSyntaxException e) { }
 
         assertEquals(expectedTree1, parser.getProblemTree());
         assertEquals(expectedLevelToMaxStep1, parser.getLevelToMaxStepReached());
@@ -94,7 +96,9 @@ public class ParserTest {
 
     @Test
     public void testCreateProblemTree2() {
-        parser = new Parser("(3+2)");
+        try {
+            parser = new Parser("(3+2)");
+        } catch (IncorrectProblemSyntaxException e) { }
 
         assertEquals(expectedTree2, parser.getProblemTree());
         assertEquals(expectedLevelToMaxStep2, parser.getLevelToMaxStepReached());
@@ -103,7 +107,9 @@ public class ParserTest {
 
     @Test
     public void testCreateProblemTree3() {
+        try {
         parser = new Parser("  3+2 ");
+        } catch (IncorrectProblemSyntaxException e) { }
 
         assertEquals(expectedTree1, parser.getProblemTree());
         assertEquals(expectedLevelToMaxStep1, parser.getLevelToMaxStepReached());
@@ -112,7 +118,9 @@ public class ParserTest {
 
     @Test
     public void testCreateProblemTree4() {
+        try {
         parser = new Parser("3 +  2");
+        } catch (IncorrectProblemSyntaxException e) { }
 
         assertEquals(expectedTree1, parser.getProblemTree());
         assertEquals(expectedLevelToMaxStep1, parser.getLevelToMaxStepReached());
@@ -121,7 +129,9 @@ public class ParserTest {
 
     @Test
     public void testCreateProblemTree5() {
+        try {
         parser = new Parser("3*2+5");
+        } catch (IncorrectProblemSyntaxException e) { }
 
         assertEquals(expectedTree3, parser.getProblemTree());
         assertEquals(expectedLevelToMaxStep2, parser.getLevelToMaxStepReached());
@@ -130,7 +140,9 @@ public class ParserTest {
 
     @Test
     public void testCreateProblemTree6() {
+        try {
         parser = new Parser("3+2*5");
+        } catch (IncorrectProblemSyntaxException e) { }
 
         assertEquals(expectedTree4, parser.getProblemTree());
         assertEquals(expectedLevelToMaxStep2, parser.getLevelToMaxStepReached());
@@ -139,7 +151,9 @@ public class ParserTest {
 
     @Test
     public void testCreateProblemTree7() {
+        try {
         parser = new Parser("3*(2+3)");
+        } catch (IncorrectProblemSyntaxException e) { }
 
         assertEquals(expectedTree5, parser.getProblemTree());
         assertEquals(expectedLevelToMaxStep2, parser.getLevelToMaxStepReached());
@@ -148,7 +162,9 @@ public class ParserTest {
 
     @Test
     public void testCreateProblemTree8() {
+        try {
         parser = new Parser("3(2+3)");
+        } catch (IncorrectProblemSyntaxException e) { }
 
         assertEquals(expectedTree5, parser.getProblemTree());
         assertEquals(expectedLevelToMaxStep2, parser.getLevelToMaxStepReached());
@@ -157,7 +173,9 @@ public class ParserTest {
 
     @Test
     public void testCreateProblemTree9() {
+        try {
         parser = new Parser("3 5");
+        } catch (IncorrectProblemSyntaxException e) { }
 
         assertEquals(expectedTree6, parser.getProblemTree());
         assertEquals(expectedLevelToMaxStep1, parser.getLevelToMaxStepReached());
@@ -166,7 +184,9 @@ public class ParserTest {
 
     @Test
     public void testCreateProblemTree10() {
+        try {
         parser = new Parser("(2+3)*5");
+        } catch (IncorrectProblemSyntaxException e) { }
 
         assertEquals(expectedTree7, parser.getProblemTree());
         assertEquals(expectedLevelToMaxStep2, parser.getLevelToMaxStepReached());
@@ -175,7 +195,9 @@ public class ParserTest {
 
     @Test
     public void testCreateProblemTree11() {
+        try {
         parser = new Parser("2*5*4*3");
+        } catch (IncorrectProblemSyntaxException e) { }
 
         assertEquals(expectedTree8, parser.getProblemTree());
         assertEquals(expectedLevelToMaxStep1, parser.getLevelToMaxStepReached());

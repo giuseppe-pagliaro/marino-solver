@@ -1,15 +1,15 @@
-package com.giuseppepagliaro.commons;
+package com.giuseppepagliaro.marinosolver.commons;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import com.giuseppepagliaro.exceptions.StepAlreadySolvedException;
-import com.giuseppepagliaro.exceptions.StepNotYetSolvedException;
+import com.giuseppepagliaro.marinosolver.exceptions.StepAlreadySolvedException;
+import com.giuseppepagliaro.marinosolver.exceptions.StepNotYetSolvedException;
 
 /**
- * Represents a branch of the problem tree returned by 
- * a {@link com.giuseppepagliaro.parsers.Parser}.
+ * Represents a leaf of the problem tree returned by 
+ * a {@link com.giuseppepagliaro.marinosolver.parsers.Parser}.
  * @author Giuseppe Pagliaro
  * @version 1.0.0
  * @since 1.0.0
@@ -40,6 +40,7 @@ public class ProblemStep {
     /**
      * Adds the given tokens to the step.
      * @param newTokens The tokens to add.
+     * @throws StepAlreadySolvedException if the step that is being modified is already solved.
      */
     public void memorize(List<String> newTokens) throws StepAlreadySolvedException {
         if (result != null) throw new StepAlreadySolvedException();
@@ -53,7 +54,7 @@ public class ProblemStep {
      * used to determine when to show the solved step when the expression string 
      * is requested.
      * @param problemTree The tree representation of the problem created by 
-     * {@link com.giuseppepagliaro.parsers.Parser}.
+     * {@link com.giuseppepagliaro.marinosolver.parsers.Parser}.
      * @throws StepNotYetSolvedException if the step references another step that is not 
      * yet solved.
      */
@@ -116,6 +117,10 @@ public class ProblemStep {
 
             op = null;
         }
+    }
+
+    public boolean isSolved(int time) {
+        return timeSolved <= time && result != null;
     }
 
     public String getResult() throws StepNotYetSolvedException {

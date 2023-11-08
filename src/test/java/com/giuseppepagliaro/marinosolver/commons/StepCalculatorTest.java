@@ -1,11 +1,11 @@
-package com.giuseppepagliaro.commons;
+package com.giuseppepagliaro.marinosolver.commons;
 
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
 /**
- * Unit tests for {@link com.giuseppepagliaro.commons.StepCalculator}.
+ * Unit tests for {@link com.giuseppepagliaro.marinosolver.commons.StepCalculator}.
  */
 public class StepCalculatorTest {
     public StepCalculatorTest() {

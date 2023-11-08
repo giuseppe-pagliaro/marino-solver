@@ -1,13 +1,13 @@
-package com.giuseppepagliaro.solvers;
+package com.giuseppepagliaro.marinosolver.solvers;
 
-import com.giuseppepagliaro.commons.ProblemStep;
-import com.giuseppepagliaro.commons.StringBuilders;
-import com.giuseppepagliaro.exceptions.NoMoreStepsException;
-import com.giuseppepagliaro.exceptions.StepNotYetSolvedException;
-import com.giuseppepagliaro.parsers.Parser;
+import com.giuseppepagliaro.marinosolver.commons.ProblemStep;
+import com.giuseppepagliaro.marinosolver.commons.StringBuilders;
+import com.giuseppepagliaro.marinosolver.exceptions.NoMoreStepsException;
+import com.giuseppepagliaro.marinosolver.parsers.Parser;
 
 /**
- * The implementation of {@link com.giuseppepagliaro.solvers.Solver} for expressions.
+ * The implementation of {@link com.giuseppepagliaro.marinosolver.solvers.Solver} 
+ * for expressions.
  * @author Giuseppe Pagliaro
  * @version 1.0.0
  * @since 1.0.0
@@ -17,7 +17,7 @@ public class ExpressionSolver extends Solver {
         super(parser);
 
         currentLevel = PARSER.getMaxLevelReached();
-        currentStep = -1;
+        currentStep = 0;
     }
 
     private int currentLevel;
@@ -29,33 +29,30 @@ public class ExpressionSolver extends Solver {
 
         incTime();
 
-        if (currentStep + 1 > PARSER.getLevelToMaxStepReached().get(currentLevel)) {
-            currentStep = -1;
+        if (currentStep > PARSER.getLevelToMaxStepReached().get(currentLevel)) {
+            currentStep = 0;
             currentLevel--;
+            PARSER.getProblemTree().get(StringBuilders.buildTreeHash(currentLevel, currentStep)).solve(getMaxTime(), PARSER.getProblemTree());
         } else {
+            PARSER.getProblemTree().get(StringBuilders.buildTreeHash(currentLevel, currentStep)).solve(getMaxTime(), PARSER.getProblemTree());
             currentStep++;
         }
-        
-        try {
-            PARSER.getProblemTree().get(StringBuilders.buildTreeHash(currentLevel, currentStep)).solve(getMaxTime(), PARSER.getProblemTree());
-        } catch (StepNotYetSolvedException e) { }
     }
 
     @Override
     protected String getProblem(ProblemStep step, int time) {
         // Using DFS
         
-        try {
-            if (step.getTimeSolved() <= time) return step.getResult();
-        } catch (StepNotYetSolvedException e) { }
+        if (step.isSolved(time)) return step.getResult();
 
         String expressionStr = "";
 
         for (String token : step.getExpression()) {
             if (StringBuilders.isATreeHash(token)) {
                 String tokenValue = getProblem(PARSER.getProblemTree().get(token), time);
+                ProblemStep referencedStep = PARSER.getProblemTree().get(token);
 
-                if (step.IS_PARENTHESIS) {
+                if (referencedStep.IS_PARENTHESIS && !referencedStep.isSolved(time)) {
                     expressionStr += "(" + tokenValue + ")";
                 } else {
                     expressionStr += tokenValue;

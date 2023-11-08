@@ -1,4 +1,4 @@
-package com.giuseppepagliaro.parsers;
+package com.giuseppepagliaro.marinosolver.parsers;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -8,15 +8,16 @@ import java.util.Map.Entry;
 import java.util.List;
 import java.util.StringTokenizer;
 
-import static com.giuseppepagliaro.commons.StringBuilders.buildTreeHash;
-import static com.giuseppepagliaro.commons.StringBuilders.buildSwitchStr;
+import static com.giuseppepagliaro.marinosolver.commons.StringBuilders.buildTreeHash;
+import static com.giuseppepagliaro.marinosolver.commons.StringBuilders.buildSwitchStr;
 
-import com.giuseppepagliaro.commons.ProblemStep;
-import com.giuseppepagliaro.exceptions.IncorrectProblemSyntaxException;
-import com.giuseppepagliaro.exceptions.ProblemErrorMessage;
+import com.giuseppepagliaro.marinosolver.commons.ProblemStep;
+import com.giuseppepagliaro.marinosolver.exceptions.IncorrectProblemSyntaxException;
+import com.giuseppepagliaro.marinosolver.exceptions.ProblemErrorMessage;
 
 /**
- * Object oriented implementation of {@link com.giuseppepagliaro.parsers.Parser}.
+ * Converts a problem in textual form to a problem tree that 
+ * can be solved by a {@link com.giuseppepagliaro.marinosolver.solvers.Solver} child.
  * @author Giuseppe Pagliaro
  * @version 1.1.0
  * @since 1.0.0
@@ -69,8 +70,8 @@ public class Parser{
     private int maxLevelReached;
 
     /**
-     * Gets the problem representation, needed by a {@link com.giuseppepagliaro.solvers.Solver} child 
-     * to solve a problem.
+     * Gets the problem representation, needed by a 
+     * {@link com.giuseppepagliaro.marinosolver.solvers.Solver} child to solve a problem.
      * @return A {@link java.util.HashMap} containing the problem tree.
      */
     public HashMap<String, ProblemStep> getProblemTree() {
@@ -78,8 +79,8 @@ public class Parser{
     }
 
     /**
-     * Gets the steps info of the problem, needed by a {@link com.giuseppepagliaro.solvers.Solver} child 
-     * to solve a problem.
+     * Gets the steps info of the problem, needed by a 
+     * {@link com.giuseppepagliaro.marinosolver.solvers.Solver} child to solve a problem.
      * @return A {@link java.util.HashMap} containing the steps info.
      */
     public HashMap<Integer, Integer> getLevelToMaxStepReached() {
@@ -245,7 +246,7 @@ public class Parser{
         currentLevel++;
     }
 
-    private void moveUp(ArrayList<String> cache, String token, int tokenInd) {
+    private void moveUp(ArrayList<String> cache, String token, int tokenInd) throws IncorrectProblemSyntaxException {
         if (token.equals(")") && currentLevel <= 0) {
             ProblemErrorMessage.PARENTHESIS_NEVER_OPENED.print(tokenInd);
         }
@@ -285,7 +286,7 @@ public class Parser{
         cache.removeAll(poppedElements);
     }
 
-    private void cacheNum(ArrayList<String> cache, String num, int tokenInd) {
+    private void cacheNum(ArrayList<String> cache, String num, int tokenInd) throws IncorrectProblemSyntaxException {
         try {
             cache.add("" + Double.parseDouble(num));
         } catch (NumberFormatException e) {

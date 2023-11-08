@@ -1,8 +1,8 @@
-package com.giuseppepagliaro.commons;
+package com.giuseppepagliaro.marinosolver.commons;
 
 import java.util.HashMap;
 
-import com.giuseppepagliaro.parsers.ProblemOperator;
+import com.giuseppepagliaro.marinosolver.parsers.ProblemOperator;
 
 /**
  * Common string factory for Marino Solver.
@@ -17,8 +17,8 @@ public final class StringBuilders {
     private static final String STEP_LABEL = "S";
 
     /**
-     * Gets the used to determine the output of the 
-     * {@link com.giuseppepagliaro.parsers.Parser} automaton.
+     * Gets the string used to determine the output of the 
+     * {@link com.giuseppepagliaro.marinosolver.parsers.Parser} automaton.
      * @param currentState The state of the automaton.
      * @param token The input.
      * @param lastOperatorValue The value of the last operator (null if a new parenthesis has been opened).
@@ -44,10 +44,10 @@ public final class StringBuilders {
     }
 
     /**
-     * Builds the string used to create a {@link com.giuseppepagliaro.commons.ProblemStep}.
+     * Builds the string used to create a {@link com.giuseppepagliaro.marinosolver.commons.ProblemStep}.
      * @param currentLevel The current level of the problem tree.
      * @param levelToMaxStepReached A {@link java.util.HashMap} that maps a level to the numbers of steps for that level.
-     * @return The hash string for the new {@link com.giuseppepagliaro.commons.ProblemStep}.
+     * @return The hash string for the new {@link com.giuseppepagliaro.marinosolver.commons.ProblemStep}.
      */
     public static String buildTreeHash(int currentLevel, HashMap<Integer, Integer> levelToMaxStepReached) {
         if (currentLevel == 0) return LEVEL_LABEL + currentLevel;
@@ -55,10 +55,10 @@ public final class StringBuilders {
     }
 
     /**
-     * Builds the string used to create a {@link com.giuseppepagliaro.commons.ProblemStep}.
+     * Builds the string used to create a {@link com.giuseppepagliaro.marinosolver.commons.ProblemStep}.
      * @param currentLevel The current level of the problem tree.
      * @param currentStep The current step of the problem tree.
-     * @return The hash string for the new {@link com.giuseppepagliaro.commons.ProblemStep}.
+     * @return The hash string for the new {@link com.giuseppepagliaro.marinosolver.commons.ProblemStep}.
      */
     public static String buildTreeHash(int currentLevel, int currentStep) {
         if (currentLevel == 0) return LEVEL_LABEL + currentLevel;
