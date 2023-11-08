@@ -3,6 +3,8 @@ package com.giuseppepagliaro.parsers;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map.Entry;
 import java.util.List;
 import java.util.StringTokenizer;
 
@@ -45,6 +47,19 @@ public class Parser{
 
     public Parser(String problem) throws IncorrectProblemSyntaxException {
         this(problem, ProblemOperator.selectAll(), true);
+    }
+
+    public Parser(Parser original) {
+        this.problemTree = new HashMap<>();
+        Iterator<Entry<String, ProblemStep>> problemTreeIterator = original.problemTree.entrySet().iterator();
+        while (problemTreeIterator.hasNext()) {
+            Entry<String, ProblemStep> entry = problemTreeIterator.next();
+            this.problemTree.put(entry.getKey(), new ProblemStep(entry.getValue()));
+        }
+
+        this.levelToMaxStepReached = new HashMap<>(original.levelToMaxStepReached);
+        this.currentLevel = 0;
+        this.maxLevelReached = original.maxLevelReached;
     }
 
     private HashMap<String, ProblemStep> problemTree;
@@ -112,6 +127,7 @@ public class Parser{
                     continue;
                 
                 case "I-)":
+                    lastOperatorValue = null;
                     parLevel--;
                     moveUp(cache, token, tokenInd);
                     continue;
@@ -156,6 +172,7 @@ public class Parser{
                     continue;
                 
                 case "N-)":
+                    lastOperatorValue = null;
                     parLevel--;
                     moveUp(cache, token, tokenInd);
                     currentState = "N";

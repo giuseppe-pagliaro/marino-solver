@@ -2,8 +2,6 @@ package com.giuseppepagliaro.commons;
 
 import java.lang.Math;
 
-import com.giuseppepagliaro.exceptions.InvalidStepException;
-
 /**
  * Calculates the steps for a {@link com.giuseppepagliaro.solvers.Solver} child.
  * @author Giuseppe Pagliaro
@@ -66,35 +64,5 @@ public final class StepCalculator {
      */
     public static String power(String n1, String n2) throws NumberFormatException {
         return "" + (Math.pow(Double.parseDouble(n1), Double.parseDouble(n2)));
-    }
-
-    /**
-     * Gets a step array and calculates the result.
-     * @param step a default Java array contaning two numbers and an operator (in the middle).
-     * @return A string with the result.
-     * @throws InvalidStepException when an invalid step is provided.
-     */
-    public static String calculateStep(String[] step) throws InvalidStepException {
-        if (step.length != 3) throw new InvalidStepException();
-
-        switch (step[1]) {
-            case "+":
-                return add(step[0], step[2]);
-            
-            case "-":
-                return subtract(step[0], step[2]);
-            
-            case "*":
-                return multiply(step[0], step[2]);
-            
-            case "/":
-                return divide(step[0], step[2]);
-            
-            case "^":
-                return power(step[0], step[2]);
-            
-            default:
-                throw new InvalidStepException();
-        }
     }
 }

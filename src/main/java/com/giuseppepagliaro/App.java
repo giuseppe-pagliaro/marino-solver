@@ -1,6 +1,7 @@
 package com.giuseppepagliaro;
 
 import java.util.Scanner;
+import java.util.Iterator;
 
 import com.giuseppepagliaro.parsers.Parser;
 import com.giuseppepagliaro.solvers.ExpressionSolver;
@@ -37,10 +38,16 @@ public class App {
             solver.solveStep();
         }
 
+        Iterator<String> historyIterator = solver.getHistory().iterator();
+
+        while (historyIterator.hasNext()) {
+            System.out.println("Step: " + historyIterator.next());
+        }
+
         System.out.println("Result: " + solver.getResult());
     }
 
-    private static void printUsageStr() {
+    private static void printUsageStr() throws IllegalArgumentException {
         throw new IllegalArgumentException("usage: MarinoSolver [problem_to_evaluate]");
     }
 }

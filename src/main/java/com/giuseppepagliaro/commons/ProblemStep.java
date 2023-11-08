@@ -1,8 +1,10 @@
 package com.giuseppepagliaro.commons;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
+import com.giuseppepagliaro.exceptions.StepAlreadySolvedException;
 import com.giuseppepagliaro.exceptions.StepNotYetSolvedException;
 
 /**
@@ -20,6 +22,14 @@ public class ProblemStep {
         expression = new ArrayList<>();
     }
 
+    public ProblemStep(ProblemStep original) {
+        this.hash = original.hash;
+        this.IS_PARENTHESIS = original.IS_PARENTHESIS;
+        this.expression = new ArrayList<>(original.expression);
+        this.result = original.result;
+        this.timeSolved = original.timeSolved;
+    }
+
     private String hash;
     private ArrayList<String> expression;
     private String result;
@@ -31,7 +41,9 @@ public class ProblemStep {
      * Adds the given tokens to the step.
      * @param newTokens The tokens to add.
      */
-    public void memorize(List<String> newTokens) {
+    public void memorize(List<String> newTokens) throws StepAlreadySolvedException {
+        if (result != null) throw new StepAlreadySolvedException();
+
         expression.addAll(new ArrayList<>(newTokens));
     }
 
@@ -40,10 +52,70 @@ public class ProblemStep {
      * @param time The time at which the step was solved, 
      * used to determine when to show the solved step when the expression string 
      * is requested.
+     * @param problemTree The tree representation of the problem created by 
+     * {@link com.giuseppepagliaro.parsers.Parser}.
+     * @throws StepNotYetSolvedException if the step references another step that is not 
+     * yet solved.
      */
-    public void solve(int time) {
-        result = StepCalculator.calculateStep((String[])expression.toArray());
+    public void solve(int time, HashMap<String, ProblemStep> problemTree) throws StepNotYetSolvedException {
         timeSolved = time;
+
+        String n1 = StringBuilders.isATreeHash(expression.get(0)) ? problemTree.get(expression.get(0)).getResult() : expression.get(0);
+        String n2 = StringBuilders.isATreeHash(expression.get(2)) ? problemTree.get(expression.get(2)).getResult() : expression.get(2);
+        switch (expression.get(1)) {
+            case "+":
+                result = StepCalculator.add(n1, n2);
+                break;
+            
+            case "-":
+                result = StepCalculator.subtract(n1, n2);
+                break;
+                
+            case "*":
+                result = StepCalculator.multiply(n1, n2);
+                break;
+            
+            case "/":
+                result = StepCalculator.divide(n1, n2);
+                break;
+                
+            case "^":
+                result = StepCalculator.power(n1, n2);
+                break;
+        }
+
+        String op = null;
+        for (int i = 3; i < expression.size(); i++) {
+            if (op == null) {
+                op = expression.get(i);
+                continue;
+            }
+
+            String n = StringBuilders.isATreeHash(expression.get(i)) ? problemTree.get(expression.get(i)).getResult() : expression.get(i);
+            switch (op) {
+                case "+":
+                    result = StepCalculator.add(result, n);
+                    break;
+                
+                case "-":
+                    result = StepCalculator.subtract(result, n);
+                    break;
+                    
+                case "*":
+                    result = StepCalculator.multiply(result, n);
+                    break;
+                
+                case "/":
+                    result = StepCalculator.divide(result, n);
+                    break;
+                    
+                case "^":
+                    result = StepCalculator.power(result, n);
+                    break;
+            }
+
+            op = null;
+        }
     }
 
     public String getResult() throws StepNotYetSolvedException {

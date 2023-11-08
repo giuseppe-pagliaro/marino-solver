@@ -17,7 +17,7 @@ public class ExpressionSolver extends Solver {
         super(parser);
 
         currentLevel = PARSER.getMaxLevelReached();
-        currentStep = 0;
+        currentStep = -1;
     }
 
     private int currentLevel;
@@ -30,13 +30,15 @@ public class ExpressionSolver extends Solver {
         incTime();
 
         if (currentStep + 1 > PARSER.getLevelToMaxStepReached().get(currentLevel)) {
-            currentStep = 0;
+            currentStep = -1;
             currentLevel--;
         } else {
             currentStep++;
         }
         
-        PARSER.getProblemTree().get(StringBuilders.buildTreeHash(currentLevel, currentStep)).solve(getMaxTime());
+        try {
+            PARSER.getProblemTree().get(StringBuilders.buildTreeHash(currentLevel, currentStep)).solve(getMaxTime(), PARSER.getProblemTree());
+        } catch (StepNotYetSolvedException e) { }
     }
 
     @Override

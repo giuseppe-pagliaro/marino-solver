@@ -3,6 +3,7 @@ package com.giuseppepagliaro.solvers;
 import java.util.LinkedList;
 
 import com.giuseppepagliaro.commons.ProblemStep;
+import com.giuseppepagliaro.commons.StringBuilders;
 import com.giuseppepagliaro.exceptions.StepNotYetReachedException;
 import com.giuseppepagliaro.exceptions.NoMoreStepsException;
 import com.giuseppepagliaro.exceptions.StepNotYetSolvedException;
@@ -16,7 +17,7 @@ import com.giuseppepagliaro.parsers.Parser;
  */
 public abstract class Solver {
     public Solver(Parser parser) {
-        PARSER = parser;
+        PARSER = new Parser(parser);
         maxTime = 0;
     }
     
@@ -32,7 +33,7 @@ public abstract class Solver {
     public String getStep(int time) throws StepNotYetReachedException {
         if (time > maxTime) throw new StepNotYetReachedException();
 
-        return getProblem(PARSER.getProblemTree().get("L0"), time);
+        return getProblem(PARSER.getProblemTree().get(StringBuilders.buildTreeHash(0, 0)), time);
     }
     
     /**
@@ -73,10 +74,10 @@ public abstract class Solver {
      */
     public boolean hasMoreSteps() {
         try {
-            PARSER.getProblemTree().get("l0").getResult();
-            return true;
-        } catch (StepNotYetSolvedException e) {
+            PARSER.getProblemTree().get(StringBuilders.buildTreeHash(0, 0)).getResult();
             return false;
+        } catch (StepNotYetSolvedException e) {
+            return true;
         }
     }
 
