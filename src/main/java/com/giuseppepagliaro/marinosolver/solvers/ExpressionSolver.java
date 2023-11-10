@@ -40,7 +40,7 @@ public class ExpressionSolver extends Solver {
     }
 
     @Override
-    protected String getProblem(ProblemStep step, int time) {
+    protected String getProblem(ProblemStep step, int time) { // TODO explore case 12+(-2)
         // Using DFS
         
         if (step.isSolved(time)) return step.getResult();

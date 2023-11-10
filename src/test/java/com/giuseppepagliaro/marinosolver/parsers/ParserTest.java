@@ -59,6 +59,16 @@ public class ParserTest {
         expectedTree8.put("L0", new ProblemStep("L0", false));
         expectedTree8.get("L0").memorize(Arrays.asList("2.0", "*", "5.0", "*", "4.0", "*", "3.0"));
 
+        expectedTree9 = new HashMap<>();
+        expectedTree9.put("L0", new ProblemStep("L0", false));
+        expectedTree9.get("L0").memorize(Arrays.asList("2", "+", "L1S0", "-", "L1S1"));
+        expectedTree9.put("L1S0", new ProblemStep("L1S0", false));
+        expectedTree9.get("L1S0").memorize(Arrays.asList("3.0", "*", "4.0", "*", "3.0"));
+        expectedTree9.put("L1S1", new ProblemStep("L1S1", true));
+        expectedTree9.get("L1S1").memorize(Arrays.asList("L2S0", "+", "5.0"));
+        expectedTree9.put("L2S0", new ProblemStep("L2S0", false));
+        expectedTree9.get("L2S0").memorize(Arrays.asList("2.0", "*", "4.0"));
+
         // Init LevelToMaxStep
 
         expectedLevelToMaxStep1 = new HashMap<>();
@@ -67,21 +77,28 @@ public class ParserTest {
         expectedLevelToMaxStep2 = new HashMap<>();
         expectedLevelToMaxStep2.put(0, 0);
         expectedLevelToMaxStep2.put(1, 0);
+
+        expectedLevelToMaxStep3 = new HashMap<>();
+        expectedLevelToMaxStep3.put(0, 0);
+        expectedLevelToMaxStep3.put(1, 1);
+        expectedLevelToMaxStep3.put(2, 0);
     }
 
-    Parser parser;
+    private Parser parser;
 
-    HashMap<String, ProblemStep> expectedTree1;
-    HashMap<String, ProblemStep> expectedTree2;
-    HashMap<String, ProblemStep> expectedTree3;
-    HashMap<String, ProblemStep> expectedTree4;
-    HashMap<String, ProblemStep> expectedTree5;
-    HashMap<String, ProblemStep> expectedTree6;
-    HashMap<String, ProblemStep> expectedTree7;
-    HashMap<String, ProblemStep> expectedTree8;
+    private HashMap<String, ProblemStep> expectedTree1;
+    private HashMap<String, ProblemStep> expectedTree2;
+    private HashMap<String, ProblemStep> expectedTree3;
+    private HashMap<String, ProblemStep> expectedTree4;
+    private HashMap<String, ProblemStep> expectedTree5;
+    private HashMap<String, ProblemStep> expectedTree6;
+    private HashMap<String, ProblemStep> expectedTree7;
+    private HashMap<String, ProblemStep> expectedTree8;
+    private HashMap<String, ProblemStep> expectedTree9;
 
-    HashMap<Integer, Integer> expectedLevelToMaxStep1;
-    HashMap<Integer, Integer> expectedLevelToMaxStep2;
+    private HashMap<Integer, Integer> expectedLevelToMaxStep1;
+    private HashMap<Integer, Integer> expectedLevelToMaxStep2;
+    private HashMap<Integer, Integer> expectedLevelToMaxStep3;
 
     @Test
     public void testCreateProblemTree1() {
@@ -108,7 +125,7 @@ public class ParserTest {
     @Test
     public void testCreateProblemTree3() {
         try {
-        parser = new Parser("  3+2 ");
+            parser = new Parser("  3+2 ");
         } catch (IncorrectProblemSyntaxException e) { }
 
         assertEquals(expectedTree1, parser.getProblemTree());
@@ -119,7 +136,7 @@ public class ParserTest {
     @Test
     public void testCreateProblemTree4() {
         try {
-        parser = new Parser("3 +  2");
+            parser = new Parser("3 +  2");
         } catch (IncorrectProblemSyntaxException e) { }
 
         assertEquals(expectedTree1, parser.getProblemTree());
@@ -130,7 +147,7 @@ public class ParserTest {
     @Test
     public void testCreateProblemTree5() {
         try {
-        parser = new Parser("3*2+5");
+            parser = new Parser("3*2+5");
         } catch (IncorrectProblemSyntaxException e) { }
 
         assertEquals(expectedTree3, parser.getProblemTree());
@@ -141,7 +158,7 @@ public class ParserTest {
     @Test
     public void testCreateProblemTree6() {
         try {
-        parser = new Parser("3+2*5");
+            parser = new Parser("3+2*5");
         } catch (IncorrectProblemSyntaxException e) { }
 
         assertEquals(expectedTree4, parser.getProblemTree());
@@ -152,7 +169,7 @@ public class ParserTest {
     @Test
     public void testCreateProblemTree7() {
         try {
-        parser = new Parser("3*(2+3)");
+            parser = new Parser("3*(2+3)");
         } catch (IncorrectProblemSyntaxException e) { }
 
         assertEquals(expectedTree5, parser.getProblemTree());
@@ -163,7 +180,7 @@ public class ParserTest {
     @Test
     public void testCreateProblemTree8() {
         try {
-        parser = new Parser("3(2+3)");
+            parser = new Parser("3(2+3)");
         } catch (IncorrectProblemSyntaxException e) { }
 
         assertEquals(expectedTree5, parser.getProblemTree());
@@ -174,7 +191,7 @@ public class ParserTest {
     @Test
     public void testCreateProblemTree9() {
         try {
-        parser = new Parser("3 5");
+            parser = new Parser("3 5");
         } catch (IncorrectProblemSyntaxException e) { }
 
         assertEquals(expectedTree6, parser.getProblemTree());
@@ -185,7 +202,7 @@ public class ParserTest {
     @Test
     public void testCreateProblemTree10() {
         try {
-        parser = new Parser("(2+3)*5");
+            parser = new Parser("(2+3)*5");
         } catch (IncorrectProblemSyntaxException e) { }
 
         assertEquals(expectedTree7, parser.getProblemTree());
@@ -196,12 +213,23 @@ public class ParserTest {
     @Test
     public void testCreateProblemTree11() {
         try {
-        parser = new Parser("2*5*4*3");
+            parser = new Parser("2*5*4*3");
         } catch (IncorrectProblemSyntaxException e) { }
 
         assertEquals(expectedTree8, parser.getProblemTree());
         assertEquals(expectedLevelToMaxStep1, parser.getLevelToMaxStepReached());
         assertEquals(0, parser.getMaxLevelReached());
+    }
+
+    @Test
+    public void testCreateProblemTree12() { // TODO fails (verify)
+        try {
+            parser = new Parser("2+3*4*3-(2*4+5)");
+        } catch (IncorrectProblemSyntaxException e) { }
+
+        assertEquals(expectedTree9, parser.getProblemTree());
+        assertEquals(expectedLevelToMaxStep3, parser.getLevelToMaxStepReached());
+        assertEquals(2, parser.getMaxLevelReached());
     }
 
     @Test

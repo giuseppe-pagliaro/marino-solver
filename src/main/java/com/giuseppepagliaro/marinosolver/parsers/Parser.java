@@ -229,10 +229,12 @@ public class Parser{
     /* Automaton Actions */
 
     private void moveDown(ArrayList<String> cache, boolean isParenthesis) {
-        maxLevelReached++;
+        currentLevel++;
+
+        if (!levelToMaxStepReached.containsKey(currentLevel)) maxLevelReached++;
 
         // Adding step record.
-        currentLevel++;
+        
         int maxStep = levelToMaxStepReached.containsKey(currentLevel) ? levelToMaxStepReached.get(currentLevel) + 1 : 0;
         levelToMaxStepReached.put(currentLevel, maxStep);
 
@@ -251,7 +253,7 @@ public class Parser{
             ProblemErrorMessage.PARENTHESIS_NEVER_OPENED.print(tokenInd);
         }
         else if (currentLevel <= 0) {
-            maxLevelReached++;
+            if (!levelToMaxStepReached.containsKey(currentLevel)) maxLevelReached++;
             
             // Adding step record.
             currentLevel++;
