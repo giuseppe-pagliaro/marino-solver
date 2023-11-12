@@ -12,7 +12,7 @@ Then, inject the parser instance into any Solver subclass and iterate over the s
 ```java
 Solver solver = new ExpressionSolver(parser);
 
-while(solver.hasMoreSteps()) {
+while (solver.hasMoreSteps()) {
     solver.solveStep();
 }
 ```
