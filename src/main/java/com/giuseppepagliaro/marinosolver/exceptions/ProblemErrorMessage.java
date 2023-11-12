@@ -1,7 +1,7 @@
-package com.giuseppepagliaro.exceptions;
+package com.giuseppepagliaro.marinosolver.exceptions;
 
 /**
- * A defacto factory for {@link com.giuseppepagliaro.exceptions.IncorrectProblemSyntaxException}.
+ * The main factory for {@link com.giuseppepagliaro.marinosolver.exceptions.IncorrectProblemSyntaxException}.
  * @author Giuseppe Pagliaro
  * @version 1.0.0
  * @since 1.0.0
