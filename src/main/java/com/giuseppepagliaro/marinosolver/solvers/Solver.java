@@ -56,7 +56,7 @@ public abstract class Solver {
     }
 
     /**
-     * Gets all the steps executed so far.
+     * Gets all the steps executed so far, not including the result.
      * @return A {@link java.util.LinkedList} containing the steps from oldest to newest.
      */
     public LinkedList<String> getHistory() {

@@ -68,14 +68,21 @@ public class ProblemStepTest {
         HashMap<String, ProblemStep> mockProblemTree = new HashMap<>();
         mockProblemTree.put("L0", step1);
         mockProblemTree.put("L1S0", step2);
-
         step2.solve(1, mockProblemTree);
-        assertEquals("32.0", step2.getResult());
-        assertEquals(1, step2.getTimeSolved());
-
         step1.solve(2, mockProblemTree);
+
+        assertEquals("32.0", step2.getResult());
         assertEquals("160.0", step1.getResult());
-        assertEquals(2, step1.getTimeSolved());
+
+        assertTrue(step2.isSolved(1));
+        assertTrue(step1.isSolved(2));
+        assertFalse(step1.isSolved(1));
+
+        assertFalse(step1.isSolved(0));
+        assertFalse(step2.isSolved(0));
+
+        assertTrue(step1.isSolved(3));
+        assertTrue(step2.isSolved(3));
     }
 
     @Test(expected = StepNotYetSolvedException.class)
@@ -90,10 +97,5 @@ public class ProblemStepTest {
     @Test(expected = StepNotYetSolvedException.class)
     public void testGetResultException() {
         step2.getResult();
-    }
-
-    @Test(expected = StepNotYetSolvedException.class)
-    public void testGetTimeSolvedException() {
-        step2.getTimeSolved();
     }
 }

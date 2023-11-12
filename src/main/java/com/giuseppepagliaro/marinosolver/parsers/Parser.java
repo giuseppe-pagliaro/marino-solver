@@ -8,8 +8,7 @@ import java.util.Map.Entry;
 import java.util.List;
 import java.util.StringTokenizer;
 
-import static com.giuseppepagliaro.marinosolver.commons.StringBuilders.buildTreeHash;
-import static com.giuseppepagliaro.marinosolver.commons.StringBuilders.buildSwitchStr;
+import com.giuseppepagliaro.marinosolver.commons.StringBuilders;
 
 import com.giuseppepagliaro.marinosolver.commons.ProblemStep;
 import com.giuseppepagliaro.marinosolver.exceptions.IncorrectProblemSyntaxException;
@@ -95,8 +94,7 @@ public class Parser{
         return maxLevelReached;
     }
 
-    private void createProblemTree(String problem, String delimiters, HashMap<String, ProblemOperator> operatorValueToOperator)
-        throws IncorrectProblemSyntaxException {
+    private void createProblemTree(String problem, String delimiters, HashMap<String, ProblemOperator> operatorValueToOperator) throws IncorrectProblemSyntaxException {
         StringTokenizer probTokenizer = new StringTokenizer(problem.trim(), delimiters, true);
         ArrayList<String> cache = new ArrayList<>();
 
@@ -107,13 +105,15 @@ public class Parser{
         int parLevel = 0;
         int tokenInd = -1;
 
+        boolean rootOpLvl = true;
+
         while (probTokenizer.hasMoreTokens()) {
             tokenInd++;
             String token = probTokenizer.nextToken();
 
             if (token.equals(" ")) continue;
 
-            switchStr = buildSwitchStr(currentState, token, lastOperatorValue, operatorValueToOperator);
+            switchStr = buildSwitchStr(rootOpLvl, currentState, token, lastOperatorValue, operatorValueToOperator);
 
             switch (switchStr) {
                 // State I
@@ -122,15 +122,18 @@ public class Parser{
                     ProblemErrorMessage.INCOMPLETE_OPERATION.print(tokenInd);
 
                 case "I-(":
+                    rootOpLvl = true;
                     lastOperatorValue = null;
                     parLevel++;
                     moveDown(cache, true);
                     continue;
                 
                 case "I-)":
+                    rootOpLvl = false;
                     lastOperatorValue = null;
                     parLevel--;
-                    moveUp(cache, token, tokenInd);
+                    memorize(cache);
+                    moveUp(tokenInd, parLevel);
                     continue;
                 
                 case "I-n":
@@ -147,14 +150,24 @@ public class Parser{
                     continue;
                 
                 case "N-opl":
-                    moveUp(cache, token, tokenInd);
-                    cache.add(token);
+                    rootOpLvl = false;
                     memorize(cache);
+                    moveUp(tokenInd, parLevel);
+                    memorize(token);
+                    lastOperatorValue = token;
+                    currentState = "OP";
+                    continue;
+                
+                case "N-opldump":
+                    rootOpLvl = false;
+                    dumpLowerOperator(cache);
+                    memorize(token);
                     lastOperatorValue = token;
                     currentState = "OP";
                     continue;
 
                 case "N-oph":
+                    rootOpLvl = false;
                     memorize(cache, 1);
                     moveDown(cache, false);
                     memorize(cache);
@@ -164,6 +177,7 @@ public class Parser{
                     continue;
                 
                 case "N-(":
+                    rootOpLvl = true;
                     lastOperatorValue = null;
                     parLevel++;
                     cache.add("*");
@@ -173,9 +187,11 @@ public class Parser{
                     continue;
                 
                 case "N-)":
+                    rootOpLvl = false;
                     lastOperatorValue = null;
                     parLevel--;
-                    moveUp(cache, token, tokenInd);
+                    memorize(cache);
+                    moveUp(tokenInd, parLevel);
                     currentState = "N";
                     continue;
                 
@@ -190,6 +206,7 @@ public class Parser{
                     ProblemErrorMessage.INCOMPLETE_OPERATION.print(tokenInd);
 
                 case "OP-(":
+                    rootOpLvl = true;
                     lastOperatorValue = null;
                     parLevel ++;
                     memorize(cache);
@@ -226,20 +243,40 @@ public class Parser{
         }
     }
 
+    private static String buildSwitchStr(boolean rootOpLvl, String currentState, String token, String lastOperatorValue, HashMap<String, ProblemOperator> operator) {
+        if (operator.containsKey(token)) {
+            if (currentState != "N") {
+                return currentState + "-op_";
+            }
+
+            if (lastOperatorValue == null || operator.get(token).compareLevel(operator.get(lastOperatorValue)) == 0) {
+                return "N-ops";
+            }
+            
+            if (operator.get(token).compareLevel(operator.get(lastOperatorValue)) < 0) {
+                if (rootOpLvl) return "N-opldump";
+                return "N-opl";
+            }
+            
+            return "N-oph";
+        }
+
+        if ("()".contains(token)) return currentState + "-" + token;
+        
+        return currentState + "-" + "n";
+    }
+
     /* Automaton Actions */
 
     private void moveDown(ArrayList<String> cache, boolean isParenthesis) {
-        currentLevel++;
-
-        if (!levelToMaxStepReached.containsKey(currentLevel)) maxLevelReached++;
-
         // Adding step record.
-        
+        currentLevel++;
+        if (!levelToMaxStepReached.containsKey(currentLevel)) maxLevelReached++;
         int maxStep = levelToMaxStepReached.containsKey(currentLevel) ? levelToMaxStepReached.get(currentLevel) + 1 : 0;
         levelToMaxStepReached.put(currentLevel, maxStep);
 
         // Create new step.
-        String newHashStr = buildTreeHash(currentLevel, levelToMaxStepReached);
+        String newHashStr = StringBuilders.buildTreeHash(currentLevel, levelToMaxStepReached);
         problemTree.put(newHashStr, new ProblemStep(newHashStr, isParenthesis));
 
         // Add reference of the new step to the tree.
@@ -248,34 +285,31 @@ public class Parser{
         currentLevel++;
     }
 
-    private void moveUp(ArrayList<String> cache, String token, int tokenInd) throws IncorrectProblemSyntaxException {
-        if (token.equals(")") && currentLevel <= 0) {
-            ProblemErrorMessage.PARENTHESIS_NEVER_OPENED.print(tokenInd);
-        }
-        else if (currentLevel <= 0) {
-            if (!levelToMaxStepReached.containsKey(currentLevel)) maxLevelReached++;
-            
-            // Adding step record.
-            currentLevel++;
-            int maxStep = levelToMaxStepReached.containsKey(currentLevel) ? levelToMaxStepReached.get(currentLevel) + 1 : 0;
-            levelToMaxStepReached.put(currentLevel, maxStep);
-            
-            // Create new step and memorize cache.
-            String newHashStr = buildTreeHash(currentLevel, levelToMaxStepReached);
-            problemTree.put(newHashStr, new ProblemStep(newHashStr, false));
-            memorize(cache);
+    private void moveUp(int tokenInd, int parLevel) throws IncorrectProblemSyntaxException {
+        if (parLevel < 0) ProblemErrorMessage.PARENTHESIS_NEVER_OPENED.print(tokenInd);
 
-            // Memorize new step reference.
-            currentLevel--;
-            memorize(newHashStr);
-        } else {
-            memorize(cache);
-            currentLevel--;
-        }
+        currentLevel--;
+    }
+
+    private void dumpLowerOperator(ArrayList<String> cache) {
+        // Adding step record.
+        currentLevel++;
+        if (!levelToMaxStepReached.containsKey(currentLevel)) maxLevelReached++;
+        int maxStep = levelToMaxStepReached.containsKey(currentLevel) ? levelToMaxStepReached.get(currentLevel) + 1 : 0;
+        levelToMaxStepReached.put(currentLevel, maxStep);
+
+        // Create new step and memorize cache.
+        String newHashStr = StringBuilders.buildTreeHash(currentLevel, levelToMaxStepReached);
+        problemTree.put(newHashStr, new ProblemStep(newHashStr, false));
+        memorize(cache);
+
+        // Memorize new step reference.
+        currentLevel--;
+        memorize(newHashStr);
     }
 
     private void memorize(String constant) {
-        problemTree.get(buildTreeHash(currentLevel, levelToMaxStepReached)).memorize(new ArrayList<>(Arrays.asList(constant)));
+        problemTree.get(StringBuilders.buildTreeHash(currentLevel, levelToMaxStepReached)).memorize(new ArrayList<>(Arrays.asList(constant)));
     }
 
     private void memorize(ArrayList<String> cache) {
@@ -284,7 +318,7 @@ public class Parser{
     
     private void memorize(ArrayList<String> cache, int offset) {
         List<String> poppedElements = cache.subList(0, cache.size() - offset);
-        problemTree.get(buildTreeHash(currentLevel, levelToMaxStepReached)).memorize(poppedElements);
+        problemTree.get(StringBuilders.buildTreeHash(currentLevel, levelToMaxStepReached)).memorize(poppedElements);
         cache.removeAll(poppedElements);
     }
 

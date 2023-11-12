@@ -30,6 +30,7 @@ System.out.println("Result: " + solver.getResult());
 ```
 
 This would be the output:
+
 ```vim
 Step: (2.0+5.0)*3.0
 Step: 7.0*3.0

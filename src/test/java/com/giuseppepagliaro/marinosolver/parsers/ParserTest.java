@@ -222,7 +222,7 @@ public class ParserTest {
     }
 
     @Test
-    public void testCreateProblemTree12() { // TODO fails (verify)
+    public void testCreateProblemTree12() {
         try {
             parser = new Parser("2+3*4*3-(2*4+5)");
         } catch (IncorrectProblemSyntaxException e) { }

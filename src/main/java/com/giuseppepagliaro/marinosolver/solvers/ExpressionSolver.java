@@ -32,15 +32,14 @@ public class ExpressionSolver extends Solver {
         if (currentStep > PARSER.getLevelToMaxStepReached().get(currentLevel)) {
             currentStep = 0;
             currentLevel--;
-            PARSER.getProblemTree().get(StringBuilders.buildTreeHash(currentLevel, currentStep)).solve(getMaxTime(), PARSER.getProblemTree());
-        } else {
-            PARSER.getProblemTree().get(StringBuilders.buildTreeHash(currentLevel, currentStep)).solve(getMaxTime(), PARSER.getProblemTree());
-            currentStep++;
         }
+
+        PARSER.getProblemTree().get(StringBuilders.buildTreeHash(currentLevel, currentStep)).solve(getMaxTime(), PARSER.getProblemTree());
+        currentStep++;
     }
 
     @Override
-    protected String getProblem(ProblemStep step, int time) { // TODO explore case 12+(-2)
+    protected String getProblem(ProblemStep step, int time) {
         // Using DFS
         
         if (step.isSolved(time)) return step.getResult();
@@ -52,7 +51,8 @@ public class ExpressionSolver extends Solver {
                 String tokenValue = getProblem(PARSER.getProblemTree().get(token), time);
                 ProblemStep referencedStep = PARSER.getProblemTree().get(token);
 
-                if (referencedStep.IS_PARENTHESIS && !referencedStep.isSolved(time)) {
+                if ((referencedStep.IS_PARENTHESIS && !referencedStep.isSolved(time)) ||
+                    (referencedStep.isSolved(time) && Double.parseDouble(referencedStep.getResult()) < 0)) {
                     expressionStr += "(" + tokenValue + ")";
                 } else {
                     expressionStr += tokenValue;

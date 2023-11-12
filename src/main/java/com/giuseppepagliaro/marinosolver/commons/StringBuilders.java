@@ -2,8 +2,6 @@ package com.giuseppepagliaro.marinosolver.commons;
 
 import java.util.HashMap;
 
-import com.giuseppepagliaro.marinosolver.parsers.ProblemOperator;
-
 /**
  * Common string factory for Marino Solver.
  * @author Giuseppe Pagliaro
@@ -15,33 +13,6 @@ public final class StringBuilders {
 
     private static final String LEVEL_LABEL = "L";
     private static final String STEP_LABEL = "S";
-
-    /**
-     * Gets the string used to determine the output of the 
-     * {@link com.giuseppepagliaro.marinosolver.parsers.Parser} automaton.
-     * @param currentState The state of the automaton.
-     * @param token The input.
-     * @param lastOperatorValue The value of the last operator (null if a new parenthesis has been opened).
-     * @param operator Operators allowed in the parser instance.
-     * @return The switch string.
-     */
-    public static String buildSwitchStr(String currentState, String token, String lastOperatorValue, HashMap<String, ProblemOperator> operator) {
-        if (operator.containsKey(token)) {
-            if (currentState != "N") return currentState + "-op_";
-
-            if (lastOperatorValue == null || operator.get(token).compareLevel(operator.get(lastOperatorValue)) == 0)
-                return "N-ops";
-            
-            if (operator.get(token).compareLevel(operator.get(lastOperatorValue)) < 0)
-                return "N-opl";
-            
-            return "N-oph";
-        }
-
-        if ("()".contains(token)) return currentState + "-" + token;
-        
-        return currentState + "-" + "n";
-    }
 
     /**
      * Builds the string used to create a {@link com.giuseppepagliaro.marinosolver.commons.ProblemStep}.

@@ -39,6 +39,7 @@ public class App {
             solver = new ExpressionSolver(new Parser(expression));
         } catch (IncorrectProblemSyntaxException e) {
             System.err.println("Syntax error detected: " + e.getMessage());
+            System.exit(-1);
             return;
         }
 

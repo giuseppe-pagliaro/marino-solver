@@ -119,6 +119,10 @@ public class ProblemStep {
         }
     }
 
+    /**
+     * Checks if the step is solved at the given time.
+     * @param time The time at which to check.
+     */
     public boolean isSolved(int time) {
         return timeSolved <= time && result != null;
     }
@@ -127,12 +131,6 @@ public class ProblemStep {
         if (result == null) throw new StepNotYetSolvedException();
 
         return result;
-    }
-
-    public int getTimeSolved() throws StepNotYetSolvedException {
-        if (result == null) throw new StepNotYetSolvedException();
-
-        return timeSolved;
     }
     
     public ArrayList<String> getExpression() {
@@ -179,6 +177,7 @@ public class ProblemStep {
 
     @Override
     public String toString() {
-        return hash + ": " + getExpressionStr() + " = " + result == null ? "(Not Yet Calculated)" : result;
+        String resultStr = result == null ? "(Not Yet Solved)" : result;
+        return hash + ": " + getExpressionStr() + " = " + resultStr;
     }
 }
