@@ -7,7 +7,6 @@ import java.util.HashMap;
 
 import org.junit.Test;
 
-import com.giuseppepagliaro.marinosolver.commons.ProblemStep;
 import com.giuseppepagliaro.marinosolver.exceptions.IncorrectProblemSyntaxException;
 
 /**
@@ -230,6 +229,13 @@ public class ParserTest {
         assertEquals(expectedTree9, parser.getProblemTree());
         assertEquals(expectedLevelToMaxStep3, parser.getLevelToMaxStepReached());
         assertEquals(2, parser.getMaxLevelReached());
+    }
+
+    @Test
+    public void testCreateProblemTree13() { // TODO Test case: evidenzia che non si riesce a risolvere un problema con più step al RootLv.
+        try {                               // Nuova azione automa: "Insert" (applicabile anche per dumpLowerOperator) aggiunge lo step e shifta il sotto-ramo
+            parser = new Parser("(2+3)*5/2+2");
+        } catch (IncorrectProblemSyntaxException e) { }
     }
 
     @Test

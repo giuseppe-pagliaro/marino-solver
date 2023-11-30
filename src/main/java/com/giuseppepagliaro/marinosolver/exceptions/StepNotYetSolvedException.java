@@ -2,8 +2,8 @@ package com.giuseppepagliaro.marinosolver.exceptions;
 
 /**
  * Thrown when trying to access the result of a 
- * {@link com.giuseppepagliaro.marinosolver.commons.ProblemStep} 
- * that is not solved yet.
+ * {@link com.giuseppepagliaro.marinosolver.parsers.ProblemStep} 
+ * that is not yet solved.
  * @author Giuseppe Pagliaro
  * @version 1.0.0
  * @since 1.0.0

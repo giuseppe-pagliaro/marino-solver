@@ -2,7 +2,7 @@ package com.giuseppepagliaro.marinosolver.exceptions;
 
 /**
  * Thrown when the memorize method is called on a solved 
- * {@link com.giuseppepagliaro.marinosolver.commons.ProblemStep}.
+ * {@link com.giuseppepagliaro.marinosolver.parsers.ProblemStep}.
  * @author Giuseppe Pagliaro
  * @version 1.0.0
  * @since 1.0.0

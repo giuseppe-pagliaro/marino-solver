@@ -8,9 +8,6 @@ import java.util.Map.Entry;
 import java.util.List;
 import java.util.StringTokenizer;
 
-import com.giuseppepagliaro.marinosolver.commons.StringBuilders;
-
-import com.giuseppepagliaro.marinosolver.commons.ProblemStep;
 import com.giuseppepagliaro.marinosolver.exceptions.IncorrectProblemSyntaxException;
 import com.giuseppepagliaro.marinosolver.exceptions.ProblemErrorMessage;
 
@@ -35,8 +32,8 @@ public class Parser{
         String delimiters = " ";
         HashMap<String, ProblemOperator> operatorValueToOperator = new HashMap<>();
         for (ProblemOperator operator : operators) {
-            delimiters += operator.getValue();
-            operatorValueToOperator.put(operator.getValue(), operator);
+            delimiters += operator.VALUE;
+            operatorValueToOperator.put(operator.VALUE, operator);
         }
 
         if (acceptParenthesis)
@@ -119,7 +116,7 @@ public class Parser{
                 // State I
 
                 case "I-op_":
-                    ProblemErrorMessage.INCOMPLETE_OPERATION.print(tokenInd);
+                    ProblemErrorMessage.INCOMPLETE_OPERATION.print("" + tokenInd);
 
                 case "I-(":
                     rootOpLvl = true;
@@ -203,7 +200,7 @@ public class Parser{
                 // State OP
 
                 case "OP-op_":
-                    ProblemErrorMessage.INCOMPLETE_OPERATION.print(tokenInd);
+                    ProblemErrorMessage.INCOMPLETE_OPERATION.print("" + tokenInd);
 
                 case "OP-(":
                     rootOpLvl = true;
@@ -215,7 +212,7 @@ public class Parser{
                     continue;
                 
                 case "OP-)":
-                    ProblemErrorMessage.INCOMPLETE_OPERATION.print(tokenInd);
+                    ProblemErrorMessage.INCOMPLETE_OPERATION.print("" + tokenInd);
                 
                 case "OP-n":
                     cacheNum(cache, token, tokenInd);
@@ -229,17 +226,17 @@ public class Parser{
         switch (currentState) {
             case "I":
                 if (tokenInd == 0 || tokenInd == -1)
-                    ProblemErrorMessage.EMPTY_PROBLEM.print(0);
+                    ProblemErrorMessage.EMPTY_PROBLEM.print("0");
                 else
-                    ProblemErrorMessage.PARENTHESIS_NOT_CLOSED.print(tokenInd);
+                    ProblemErrorMessage.PARENTHESIS_NOT_CLOSED.print("" + tokenInd);
             
             case "N":
-                if (parLevel != 0) ProblemErrorMessage.PARENTHESIS_NOT_CLOSED.print(tokenInd);
+                if (parLevel != 0) ProblemErrorMessage.PARENTHESIS_NOT_CLOSED.print("" + tokenInd);
                 memorize(cache);
                 return;
             
             case "OP":
-                ProblemErrorMessage.INCOMPLETE_OPERATION.print(tokenInd);
+                ProblemErrorMessage.INCOMPLETE_OPERATION.print("" + tokenInd);
         }
     }
 
@@ -249,11 +246,11 @@ public class Parser{
                 return currentState + "-op_";
             }
 
-            if (lastOperatorValue == null || operator.get(token).compareLevel(operator.get(lastOperatorValue)) == 0) {
+            if (lastOperatorValue == null || operator.get(token).compareLevel(operator.get(lastOperatorValue)) == ProblemOperator.Priority.SAME) {
                 return "N-ops";
             }
             
-            if (operator.get(token).compareLevel(operator.get(lastOperatorValue)) < 0) {
+            if (operator.get(token).compareLevel(operator.get(lastOperatorValue)) == ProblemOperator.Priority.LOWER) {
                 if (rootOpLvl) return "N-opldump";
                 return "N-opl";
             }
@@ -268,7 +265,7 @@ public class Parser{
 
     /* Automaton Actions */
 
-    private void moveDown(ArrayList<String> cache, boolean isParenthesis) {
+    private void moveDown(ArrayList<String> cache, boolean isParenthesis) throws IncorrectProblemSyntaxException {
         // Adding step record.
         currentLevel++;
         if (!levelToMaxStepReached.containsKey(currentLevel)) maxLevelReached++;
@@ -276,7 +273,7 @@ public class Parser{
         levelToMaxStepReached.put(currentLevel, maxStep);
 
         // Create new step.
-        String newHashStr = StringBuilders.buildTreeHash(currentLevel, levelToMaxStepReached);
+        String newHashStr = ProblemStep.buildTreeHash(currentLevel, levelToMaxStepReached);
         problemTree.put(newHashStr, new ProblemStep(newHashStr, isParenthesis));
 
         // Add reference of the new step to the tree.
@@ -286,12 +283,12 @@ public class Parser{
     }
 
     private void moveUp(int tokenInd, int parLevel) throws IncorrectProblemSyntaxException {
-        if (parLevel < 0) ProblemErrorMessage.PARENTHESIS_NEVER_OPENED.print(tokenInd);
+        if (parLevel < 0) ProblemErrorMessage.PARENTHESIS_NEVER_OPENED.print("" + tokenInd);
 
         currentLevel--;
     }
 
-    private void dumpLowerOperator(ArrayList<String> cache) {
+    private void dumpLowerOperator(ArrayList<String> cache) throws IncorrectProblemSyntaxException {
         // Adding step record.
         currentLevel++;
         if (!levelToMaxStepReached.containsKey(currentLevel)) maxLevelReached++;
@@ -299,7 +296,7 @@ public class Parser{
         levelToMaxStepReached.put(currentLevel, maxStep);
 
         // Create new step and memorize cache.
-        String newHashStr = StringBuilders.buildTreeHash(currentLevel, levelToMaxStepReached);
+        String newHashStr = ProblemStep.buildTreeHash(currentLevel, levelToMaxStepReached);
         problemTree.put(newHashStr, new ProblemStep(newHashStr, false));
         memorize(cache);
 
@@ -308,17 +305,17 @@ public class Parser{
         memorize(newHashStr);
     }
 
-    private void memorize(String constant) {
-        problemTree.get(StringBuilders.buildTreeHash(currentLevel, levelToMaxStepReached)).memorize(new ArrayList<>(Arrays.asList(constant)));
+    private void memorize(String constant) throws IncorrectProblemSyntaxException {
+        problemTree.get(ProblemStep.buildTreeHash(currentLevel, levelToMaxStepReached)).memorize(new ArrayList<>(Arrays.asList(constant)));
     }
 
-    private void memorize(ArrayList<String> cache) {
+    private void memorize(ArrayList<String> cache) throws IncorrectProblemSyntaxException {
         memorize(cache, 0);
     }
     
-    private void memorize(ArrayList<String> cache, int offset) {
+    private void memorize(ArrayList<String> cache, int offset) throws IncorrectProblemSyntaxException {
         List<String> poppedElements = cache.subList(0, cache.size() - offset);
-        problemTree.get(StringBuilders.buildTreeHash(currentLevel, levelToMaxStepReached)).memorize(poppedElements);
+        problemTree.get(ProblemStep.buildTreeHash(currentLevel, levelToMaxStepReached)).memorize(poppedElements);
         cache.removeAll(poppedElements);
     }
 
@@ -326,7 +323,7 @@ public class Parser{
         try {
             cache.add("" + Double.parseDouble(num));
         } catch (NumberFormatException e) {
-            ProblemErrorMessage.NON_PARSABLE_NUMBER_TOKEN.print(tokenInd);
+            ProblemErrorMessage.NON_PARSABLE_NUMBER_TOKEN.print("" + tokenInd);
         }
     }
 }

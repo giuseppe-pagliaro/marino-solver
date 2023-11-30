@@ -1,9 +1,8 @@
 package com.giuseppepagliaro.marinosolver.solvers;
 
-import com.giuseppepagliaro.marinosolver.commons.ProblemStep;
-import com.giuseppepagliaro.marinosolver.commons.StringBuilders;
 import com.giuseppepagliaro.marinosolver.exceptions.NoMoreStepsException;
 import com.giuseppepagliaro.marinosolver.parsers.Parser;
+import com.giuseppepagliaro.marinosolver.parsers.ProblemStep;
 
 /**
  * The implementation of {@link com.giuseppepagliaro.marinosolver.solvers.Solver} 
@@ -34,7 +33,7 @@ public class ExpressionSolver extends Solver {
             currentLevel--;
         }
 
-        PARSER.getProblemTree().get(StringBuilders.buildTreeHash(currentLevel, currentStep)).solve(getMaxTime(), PARSER.getProblemTree());
+        PARSER.getProblemTree().get(ProblemStep.buildTreeHash(currentLevel, currentStep)).solve(getMaxTime(), PARSER.getProblemTree());
         currentStep++;
     }
 
@@ -47,7 +46,7 @@ public class ExpressionSolver extends Solver {
         String expressionStr = "";
 
         for (String token : step.getExpression()) {
-            if (StringBuilders.isATreeHash(token)) {
+            if (ProblemStep.isATreeHash(token)) {
                 String tokenValue = getProblem(PARSER.getProblemTree().get(token), time);
                 ProblemStep referencedStep = PARSER.getProblemTree().get(token);
 

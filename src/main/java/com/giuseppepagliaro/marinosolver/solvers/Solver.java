@@ -2,12 +2,11 @@ package com.giuseppepagliaro.marinosolver.solvers;
 
 import java.util.LinkedList;
 
-import com.giuseppepagliaro.marinosolver.commons.ProblemStep;
-import com.giuseppepagliaro.marinosolver.commons.StringBuilders;
 import com.giuseppepagliaro.marinosolver.exceptions.StepNotYetReachedException;
 import com.giuseppepagliaro.marinosolver.exceptions.NoMoreStepsException;
 import com.giuseppepagliaro.marinosolver.exceptions.StepNotYetSolvedException;
 import com.giuseppepagliaro.marinosolver.parsers.Parser;
+import com.giuseppepagliaro.marinosolver.parsers.ProblemStep;
 
 /**
  * Main contract for problem solvers of the Marino Solver library.
@@ -33,7 +32,7 @@ public abstract class Solver {
     public String getStep(int time) throws StepNotYetReachedException {
         if (time > maxTime) throw new StepNotYetReachedException();
 
-        return getProblem(PARSER.getProblemTree().get(StringBuilders.buildTreeHash(0, 0)), time);
+        return getProblem(PARSER.getProblemTree().get(ProblemStep.buildTreeHash(0, 0)), time);
     }
     
     /**
@@ -74,7 +73,7 @@ public abstract class Solver {
      */
     public boolean hasMoreSteps() {
         try {
-            PARSER.getProblemTree().get(StringBuilders.buildTreeHash(0, 0)).getResult();
+            PARSER.getProblemTree().get(ProblemStep.buildTreeHash(0, 0)).getResult();
             return false;
         } catch (StepNotYetSolvedException e) {
             return true;
